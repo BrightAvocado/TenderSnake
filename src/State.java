@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import logist.topology.Topology.City;
 
 /**
@@ -9,11 +11,11 @@ import logist.topology.Topology.City;
 public class State {
 
 	private City fromCity;
-	private City toCity;
+	private ArrayList<City> possibleCities;
 	
-	public State(City fromCity, City toCity) {
+	public State(City fromCity, ArrayList<City> possibleCities) {
 		this.fromCity = fromCity;
-		this.toCity = toCity;
+		this.possibleCities = possibleCities;
 	}
 
 	@Override
