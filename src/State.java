@@ -34,4 +34,12 @@ public class State {
 		//TODO
 		return "todo";
 	}
+	
+	public City getCurrentCity() {
+		return this.currentCity;
+	}
+	
+	public HashSet<Task> getCarriedTasks() {
+		return this.carriedTasks;
+	}
 }
