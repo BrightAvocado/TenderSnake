@@ -47,7 +47,7 @@ public class Tree {
 	}
 
 	/*
-	 * Generate ALL the possible children Nodes coming from parentNode and using the
+	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and using the
 	 * carriedTasks and TaskSet of parentNode to find them
 	 */
 	private ArrayList<Node> generateChildren(Node parentNode) {
@@ -61,7 +61,7 @@ public class Tree {
 	}
 
 	/*
-	 * Generate ALL the possible children Nodes coming from parentNode and using the
+	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and using the
 	 * TaskSet to find them
 	 */
 	private ArrayList<Node> generateChildrenIssuedFromTaskSet(Node parentNode) {
@@ -74,10 +74,13 @@ public class Tree {
 		for (Task parentTask : parentTaskSet) {
 			// The action that's being made is "go to that task's pickup city and pick up
 			// the task"
+			
 			TaskSet childTaskSet = parentTaskSet.clone();
 			childTaskSet.remove(parentTask);
+			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
+			childCarriedTasks.add(parentTask);
 
-			State childState = new State(parentTask.pickupCity, childTaskSet, parentCarriedTasks);
+			State childState = new State(parentTask.pickupCity, childTaskSet, childCarriedTasks);
 
 			children.add(new Node(parentNode, childState));
 		}
@@ -86,7 +89,7 @@ public class Tree {
 	}
 
 	/*
-	 * Generate ALL the possible children Nodes coming from parentNode and using the
+	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and using the
 	 * carriedTasks to find them
 	 */
 	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode) {
