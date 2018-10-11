@@ -27,3 +27,6 @@ hs_err_pid*
 report/*.log
 report/*.aux
 report/*.gz
+
+#Anything within /bin
+bin/*s
