@@ -15,13 +15,15 @@ public class Tree {
 		 * Node sitting at the top of the tree, parent of all the children, (dutiful
 		 * protecter of the realm)
 		 */
+		this.nodes = new ArrayList<ArrayList<Node>>();
+		
+		//Create and add the rootNode to the tree
 		Node rootNode = new Node(null, currentState);
 		this.nodes.add(new ArrayList<Node>(Arrays.asList(rootNode)));
 
-		// TODO: Populate the tree
-
+		//Populate the tree under the rootNode
 		boolean allNodesAtThisLevelAreChildless = rootNode.isChildless();
-		int currentLevel = 1;
+		int currentLevel = 0;
 		while (!allNodesAtThisLevelAreChildless) {
 			ArrayList<Node> nodesAtNextLevel = new ArrayList<Node>();
 
@@ -128,4 +130,6 @@ public class Tree {
 	public ArrayList<Node> getNodesAtLevel(int level) {
 		return this.nodes.get(level);
 	}
+	
+	
 }
