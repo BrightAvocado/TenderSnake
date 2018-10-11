@@ -14,12 +14,12 @@ import logist.topology.Topology.City;
 public class State {
 
 	private City currentCity;
-	private TaskSet ts;
+	private TaskSet taskSet;
 	private HashSet<Task> carriedTasks;
 
-	public State(City currentCity, TaskSet ts, HashSet<Task> carriedTasks) {
+	public State(City currentCity, TaskSet taskSet, HashSet<Task> carriedTasks) {
 		this.currentCity = currentCity;
-		this.ts = ts;
+		this.taskSet = taskSet;
 		this.carriedTasks = carriedTasks;
 	}
 
@@ -44,7 +44,7 @@ public class State {
 	}
 	
 	public TaskSet getTaskSet() {
-		return this.ts;
+		return this.taskSet;
 	}
 
 }
