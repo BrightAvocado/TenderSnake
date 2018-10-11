@@ -1,5 +1,7 @@
-import java.util.ArrayList;
+import java.util.HashSet;
 
+import logist.task.Task;
+import logist.task.TaskSet;
 import logist.topology.Topology.City;
 
 /**
@@ -7,16 +9,18 @@ import logist.topology.Topology.City;
  * because last time, debugging was a pain.
  * 
  * The state of the vehicle can be entirely defined by where it's coming from
- * and where it's going. (really ? No tasks it's carrying ?)
+ * and where it can go
  */
 public class State {
 
 	private City currentCity;
-	private ArrayList<City> possibleCities;
+	private TaskSet ts;
+	private HashSet<Task> carriedTasks;
 
-	public State(City currentCity, ArrayList<City> possibleCities) {
+	public State(City currentCity, TaskSet ts, HashSet<Task> carriedTasks) {
 		this.currentCity = currentCity;
-		this.possibleCities = possibleCities;
+		this.ts = ts;
+		this.carriedTasks = carriedTasks;
 	}
 
 	@Override
@@ -27,6 +31,7 @@ public class State {
 
 	@Override
 	public String toString() {
-		return currentCity + " -> " + possibleCities;
+		//TODO
+		return "todo";
 	}
 }
