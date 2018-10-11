@@ -29,4 +29,4 @@ report/*.aux
 report/*.gz
 
 #Anything within /bin
-bin/*s
+bin/*
