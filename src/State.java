@@ -42,4 +42,9 @@ public class State {
 	public HashSet<Task> getCarriedTasks() {
 		return this.carriedTasks;
 	}
+	
+	public TaskSet getTaskSet() {
+		return this.ts;
+	}
+
 }
