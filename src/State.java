@@ -31,8 +31,7 @@ public class State {
 
 	@Override
 	public String toString() {
-		//TODO
-		return "todo";
+		return this.currentCity + " " + this.taskSet + " " + this.carriedTasks;
 	}
 	
 	public City getCurrentCity() {

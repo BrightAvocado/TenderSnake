@@ -1,5 +1,8 @@
 /* import table */
 import logist.simulation.Vehicle;
+
+import java.util.HashSet;
+
 import logist.agent.Agent;
 import logist.behavior.DeliberativeBehavior;
 import logist.plan.Plan;
@@ -61,6 +64,10 @@ public class Deliberative implements DeliberativeBehavior {
 		default:
 			throw new AssertionError("Should not happen.");
 		}		
+		
+		//TESTS ARE BEING MADE HERE. SERIOUS STUFF
+		State currentState = new State(agent.vehicles().get(0).getCurrentCity(), tasks, new HashSet<Task>());
+		System.out.println(currentState);
 		return plan;
 	}
 	
