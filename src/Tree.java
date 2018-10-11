@@ -16,12 +16,12 @@ public class Tree {
 		 * protecter of the realm)
 		 */
 		this.nodes = new ArrayList<ArrayList<Node>>();
-		
-		//Create and add the rootNode to the tree
+
+		// Create and add the rootNode to the tree
 		Node rootNode = new Node(null, currentState);
 		this.nodes.add(new ArrayList<Node>(Arrays.asList(rootNode)));
 
-		//Populate the tree under the rootNode
+		// Populate the tree under the rootNode
 		boolean allNodesAtThisLevelAreChildless = rootNode.isChildless();
 		int currentLevel = 0;
 		while (!allNodesAtThisLevelAreChildless) {
@@ -35,11 +35,11 @@ public class Tree {
 			currentLevel++;
 
 			// Find out if ALL the child at this level are childless
-			allNodesAtThisLevelAreChildless = false;
-			for (int i = 0; i < this.getNodesAtLevel(currentLevel).size() && !allNodesAtThisLevelAreChildless; i++) {
+			allNodesAtThisLevelAreChildless = true;
+			for (int i = 0; i < this.getNodesAtLevel(currentLevel).size() && allNodesAtThisLevelAreChildless; i++) {
 				Node node = this.getNodesAtLevel(currentLevel).get(i);
 				if (!node.isChildless()) {
-					allNodesAtThisLevelAreChildless = true;
+					allNodesAtThisLevelAreChildless = false;
 				}
 			}
 		}
@@ -116,12 +116,14 @@ public class Tree {
 	private void prune() {
 		// TODO
 	}
-	
+
 	/*
-	 * Not very necessary, but right now, if there are several tasks that can be picked up in one city, each "pick up" would be one node.
-	 * A neat thing to do would be to "compress" all these actions in one city into only ONE node.
-	 * To do that, go through the tree looking for nodes who are in the same city as their parent.
-	 * Is it really worth it though since I'd have to look through the tree ? Maybe it should be implemented directly when building the tree.
+	 * Not very necessary, but right now, if there are several tasks that can be
+	 * picked up in one city, each "pick up" would be one node. A neat thing to do
+	 * would be to "compress" all these actions in one city into only ONE node. To
+	 * do that, go through the tree looking for nodes who are in the same city as
+	 * their parent. Is it really worth it though since I'd have to look through the
+	 * tree ? Maybe it should be implemented directly when building the tree.
 	 */
 	private void compress() {
 		// TODO
@@ -130,6 +132,5 @@ public class Tree {
 	public ArrayList<Node> getNodesAtLevel(int level) {
 		return this.nodes.get(level);
 	}
-	
-	
+
 }
