@@ -10,7 +10,7 @@ import logist.topology.Topology.City;
 public class Tree {
 	private ArrayList<ArrayList<Node>> nodes;
 
-	public Tree(State currentState) {
+	public Tree(State currentState, int capacity) {
 		/*
 		 * Node sitting at the top of the tree, parent of all the children, (dutiful
 		 * protecter of the realm)
@@ -28,7 +28,7 @@ public class Tree {
 			ArrayList<Node> nodesAtNextLevel = new ArrayList<Node>();
 
 			for (Node node : this.getNodesAtLevel(currentLevel)) {
-				ArrayList<Node> childrenOfThisNode = this.generateChildren(node);
+				ArrayList<Node> childrenOfThisNode = this.generateChildren(node, capacity);
 				nodesAtNextLevel.addAll(childrenOfThisNode);
 			}
 			this.nodes.add(nodesAtNextLevel);
@@ -47,24 +47,24 @@ public class Tree {
 	}
 
 	/*
-	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and using the
-	 * carriedTasks and TaskSet of parentNode to find them
+	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
+	 * using the carriedTasks and TaskSet of parentNode to find them
 	 */
-	private ArrayList<Node> generateChildren(Node parentNode) {
+	private ArrayList<Node> generateChildren(Node parentNode, int capacity) {
 
 		ArrayList<Node> children = new ArrayList<Node>();
 
-		children.addAll(generateChildrenIssuedFromDeliveries(parentNode));
-		children.addAll(generateChildrenIssuedFromTaskSet(parentNode));
+		children.addAll(generateChildrenIssuedFromDeliveries(parentNode, capacity));
+		children.addAll(generateChildrenIssuedFromTaskSet(parentNode, capacity));
 
 		return children;
 	}
 
 	/*
-	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and using the
-	 * TaskSet to find them
+	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
+	 * using the TaskSet to find them
 	 */
-	private ArrayList<Node> generateChildrenIssuedFromTaskSet(Node parentNode) {
+	private ArrayList<Node> generateChildrenIssuedFromTaskSet(Node parentNode, int capacity) {
 		// TODO Auto-generated method stub
 		TaskSet parentTaskSet = parentNode.getState().getTaskSet();
 		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
@@ -74,7 +74,7 @@ public class Tree {
 		for (Task parentTask : parentTaskSet) {
 			// The action that's being made is "go to that task's pickup city and pick up
 			// the task"
-			
+
 			TaskSet childTaskSet = parentTaskSet.clone();
 			childTaskSet.remove(parentTask);
 			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
@@ -82,17 +82,21 @@ public class Tree {
 
 			State childState = new State(parentTask.pickupCity, childTaskSet, childCarriedTasks);
 
-			children.add(new Node(parentNode, childState));
+			// ONLY the child Nodes who carriedWeight DOES NOT exceed the capacity are added
+			Node childNode = new Node(parentNode, childState);
+			if (childNode.getCarriedWeight() <= capacity) {
+				children.add(new Node(parentNode, childState));
+			}
 		}
 
 		return children;
 	}
 
 	/*
-	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and using the
-	 * carriedTasks to find them
+	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
+	 * using the carriedTasks to find them
 	 */
-	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode) {
+	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode, int capacity) {
 		TaskSet parentTaskSet = parentNode.getState().getTaskSet();
 		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
 
@@ -106,7 +110,11 @@ public class Tree {
 
 			State childState = new State(parentCarriedTask.deliveryCity, parentTaskSet, childCarriedTasks);
 
-			children.add(new Node(parentNode, childState));
+			// ONLY the child Nodes who carriedWeight DOES NOT exceed the capacity are added
+			Node childNode = new Node(parentNode, childState);
+			if (childNode.getCarriedWeight() <= capacity) {
+				children.add(new Node(parentNode, childState));
+			}
 		}
 
 		return children;
