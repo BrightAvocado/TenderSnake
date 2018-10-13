@@ -1,11 +1,8 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 
 import logist.task.Task;
 import logist.task.TaskSet;
-import logist.topology.Topology.City;
 
 public class Tree {
 	private ArrayList<ArrayList<Node>> nodes;
