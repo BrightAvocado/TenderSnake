@@ -94,6 +94,12 @@ public class Deliberative implements DeliberativeBehavior {
 		}
 		return plan;
 	}
+	
+	private Plan bfsPlan(Tree _tree){
+		BreadthFirstSearch bfs = new BreadthFirstSearch(_tree);
+		Plan plan = bfs.getBestPlan();
+		return plan;
+	}
 
 	@Override
 	public void planCancelled(TaskSet carriedTasks) {

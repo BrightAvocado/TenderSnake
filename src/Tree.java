@@ -3,19 +3,21 @@ import java.util.Arrays;
 
 import logist.task.Task;
 import logist.task.TaskSet;
+import logist.topology.Topology.City;
 
 public class Tree {
 	private ArrayList<ArrayList<Node>> nodes;
-
+	private Node rootNode;
+	
 	public Tree(State currentState, int capacity) {
 		/*
 		 * Node sitting at the top of the tree, parent of all the children, (dutiful
-		 * protecter of the realm)
+		 * protector of the realm)
 		 */
 		this.nodes = new ArrayList<ArrayList<Node>>();
 
 		// Create and add the rootNode to the tree
-		Node rootNode = new Node(null, currentState);
+		rootNode = new Node(null, currentState);
 		this.nodes.add(new ArrayList<Node>(Arrays.asList(rootNode)));
 
 		// Populate the tree under the rootNode
@@ -77,16 +79,17 @@ public class Tree {
 			
 			TaskSet childCarriedTasks = parentCarriedTasks.clone();
 			childCarriedTasks.add(parentTaskToPickUp);
-
-			State childState = new State(parentTaskToPickUp.pickupCity, childTasksToPickUp, childCarriedTasks);
+			
+			City currentCity = parentTaskToPickUp.pickupCity;
+			
+			State childState = new State(currentCity, childTasksToPickUp, childCarriedTasks);
 
 			// ONLY the child Nodes who carriedWeight DOES NOT exceed the capacity are added
 			Node childNode = new Node(parentNode, childState);
 			if (childNode.getCarriedWeight() <= capacity) {
 				children.add(new Node(parentNode, childState));
-			}
+			}			
 		}
-
 		return children;
 	}
 
@@ -128,6 +131,11 @@ public class Tree {
 	 */
 	private void compress() {
 		// TODO
+	}
+	
+	@SuppressWarnings("unused")
+	public Node getRootNode(){
+		return this.rootNode;
 	}
 
 	public ArrayList<Node> getNodesAtLevel(int level) {

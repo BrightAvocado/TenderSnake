@@ -1,6 +1,7 @@
 import java.util.HashSet;
 
 import logist.task.Task;
+import logist.task.TaskSet;
 
 public class Node {
 	private Node parent;

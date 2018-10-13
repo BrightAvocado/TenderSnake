@@ -13,7 +13,7 @@ public class State {
 	private City currentCity;
 	private TaskSet tasksToPickUp; // Tasks that haven't been picked up yet
 	private TaskSet carriedTasks; // Tasks that are currently being carried by the vehicle who's in this state
-
+	
 	public State(City currentCity, TaskSet taskSet, TaskSet carriedTasks) {
 		this.currentCity = currentCity;
 		this.tasksToPickUp = taskSet;
