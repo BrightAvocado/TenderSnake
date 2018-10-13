@@ -121,14 +121,6 @@ public class Tree {
 	}
 
 	/*
-	 * Once the tree is fully formed, prune it so that all the children of
-	 * impossible path (because too heavy) are dropped
-	 */
-	private void prune() {
-		// TODO
-	}
-
-	/*
 	 * Not very necessary, but right now, if there are several tasks that can be
 	 * picked up in one city, each "pick up" would be one node. A neat thing to do
 	 * would be to "compress" all these actions in one city into only ONE node. To
