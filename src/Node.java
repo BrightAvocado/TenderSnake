@@ -51,7 +51,7 @@ public class Node {
 	}
 
 	public boolean isChildless() {
-		return this.state.getTaskSet().isEmpty() && this.state.getCarriedTasks().isEmpty();
+		return this.state.getTasksToPickUp().isEmpty() && this.state.getCarriedTasks().isEmpty();
 	}
 
 	public Node getParent() {
