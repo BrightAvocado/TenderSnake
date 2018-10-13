@@ -33,3 +33,4 @@ bin/*
 
 # History of the last run
 history.xml
+/bin/
