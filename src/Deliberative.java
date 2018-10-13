@@ -66,9 +66,9 @@ public class Deliberative implements DeliberativeBehavior {
 		}		
 		
 		//TESTS ARE BEING MADE HERE. SERIOUS STUFF
-		State currentState = new State(agent.vehicles().get(0).getCurrentCity(), tasks, new HashSet<Task>());
+		State currentState = new State(vehicle.getCurrentCity(), tasks, new HashSet<Task>());
 		System.out.println(currentState.getTaskSet());
-		Tree tree = new Tree(currentState);
+		Tree tree = new Tree(currentState, vehicle.capacity());
 		return plan;
 	}
 	
