@@ -110,7 +110,7 @@ public class Tree {
 
 			State childState = new State(parentCarriedTask.deliveryCity, parentTaskSet, childCarriedTasks);
 
-			// ONLY the child Nodes who carriedWeight DOES NOT exceed the capacity are added
+			// ONLY the child Nodes whose carriedWeight DOES NOT exceed the capacity are added
 			Node childNode = new Node(parentNode, childState);
 			if (childNode.getCarriedWeight() <= capacity) {
 				children.add(new Node(parentNode, childState));
