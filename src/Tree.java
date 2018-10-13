@@ -55,7 +55,7 @@ public class Tree {
 		ArrayList<Node> children = new ArrayList<Node>();
 
 		children.addAll(generateChildrenIssuedFromDeliveries(parentNode, capacity));
-		children.addAll(generateChildrenIssuedFromTaskSet(parentNode, capacity));
+		children.addAll(generateChildrenIssuedFromTasksToPickUp(parentNode, capacity));
 
 		return children;
 	}
@@ -64,23 +64,24 @@ public class Tree {
 	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
 	 * using the TaskSet to find them
 	 */
-	private ArrayList<Node> generateChildrenIssuedFromTaskSet(Node parentNode, int capacity) {
+	private ArrayList<Node> generateChildrenIssuedFromTasksToPickUp(Node parentNode, int capacity) {
 		// TODO Auto-generated method stub
-		TaskSet parentTaskSet = parentNode.getState().getTaskSet();
-		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
+		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
+		TaskSet parentCarriedTasks = parentNode.getState().getCarriedTasks();
 
 		ArrayList<Node> children = new ArrayList<Node>();
 
-		for (Task parentTask : parentTaskSet) {
+		for (Task parentTaskToPickUp : parentTasksToPickUp) {
 			// The action that's being made is "go to that task's pickup city and pick up
 			// the task"
 
-			TaskSet childTaskSet = parentTaskSet.clone();
-			childTaskSet.remove(parentTask);
-			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
-			childCarriedTasks.add(parentTask);
+			TaskSet childTasksToPickUp = parentTasksToPickUp.clone();
+			childTasksToPickUp.remove(parentTaskToPickUp);
+			
+			TaskSet childCarriedTasks = parentCarriedTasks.clone();
+			childCarriedTasks.add(parentTaskToPickUp);
 
-			State childState = new State(parentTask.pickupCity, childTaskSet, childCarriedTasks);
+			State childState = new State(parentTaskToPickUp.pickupCity, childTasksToPickUp, childCarriedTasks);
 
 			// ONLY the child Nodes who carriedWeight DOES NOT exceed the capacity are added
 			Node childNode = new Node(parentNode, childState);
@@ -97,18 +98,18 @@ public class Tree {
 	 * using the carriedTasks to find them
 	 */
 	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode, int capacity) {
-		TaskSet parentTaskSet = parentNode.getState().getTaskSet();
-		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
+		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
+		TaskSet parentCarriedTasks = parentNode.getState().getCarriedTasks();
 
 		ArrayList<Node> children = new ArrayList<Node>();
 
 		for (Task parentCarriedTask : parentCarriedTasks) {
 			// The action that's being made is "go to that task's delivery city and deliver
 			// the task"
-			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
+			TaskSet childCarriedTasks = parentCarriedTasks.clone();
 			childCarriedTasks.remove(parentCarriedTask);
 
-			State childState = new State(parentCarriedTask.deliveryCity, parentTaskSet, childCarriedTasks);
+			State childState = new State(parentCarriedTask.deliveryCity, parentTasksToPickUp, childCarriedTasks);
 
 			// ONLY the child Nodes whose carriedWeight DOES NOT exceed the capacity are added
 			Node childNode = new Node(parentNode, childState);
