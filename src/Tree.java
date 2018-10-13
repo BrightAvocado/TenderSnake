@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import logist.task.Task;
 import logist.task.TaskSet;
@@ -64,7 +65,7 @@ public class Tree {
 	private ArrayList<Node> generateChildrenIssuedFromTasksToPickUp(Node parentNode, int capacity) {
 		// TODO Auto-generated method stub
 		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
-		TaskSet parentCarriedTasks = parentNode.getState().getCarriedTasks();
+		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
 
 		ArrayList<Node> children = new ArrayList<Node>();
 
@@ -75,7 +76,7 @@ public class Tree {
 			TaskSet childTasksToPickUp = parentTasksToPickUp.clone();
 			childTasksToPickUp.remove(parentTaskToPickUp);
 			
-			TaskSet childCarriedTasks = parentCarriedTasks.clone();
+			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
 			childCarriedTasks.add(parentTaskToPickUp);
 
 			State childState = new State(parentTaskToPickUp.pickupCity, childTasksToPickUp, childCarriedTasks);
@@ -96,14 +97,14 @@ public class Tree {
 	 */
 	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode, int capacity) {
 		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
-		TaskSet parentCarriedTasks = parentNode.getState().getCarriedTasks();
+		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
 
 		ArrayList<Node> children = new ArrayList<Node>();
 
 		for (Task parentCarriedTask : parentCarriedTasks) {
 			// The action that's being made is "go to that task's delivery city and deliver
 			// the task"
-			TaskSet childCarriedTasks = parentCarriedTasks.clone();
+			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
 			childCarriedTasks.remove(parentCarriedTask);
 
 			State childState = new State(parentCarriedTask.deliveryCity, parentTasksToPickUp, childCarriedTasks);
