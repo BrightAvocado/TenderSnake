@@ -71,15 +71,10 @@ public class BreadthFirstSearch {
 	}
 	
 	private Plan createNodePlan(Node _node){		
-		Node currentNode = _node;
 		Node rootNode = tree.getRootNode();
-		
-		ArrayList<Action> actionList = new ArrayList<Action>();		
-	
-		//move up from node until root is found, and create a list of actions in reverse
-		while(currentNode != rootNode){			
-			actionList.add(currentNode.getAction());			
-		}
+			
+		//move up from node until root is found, and create a list of actions in reverse	
+		ArrayList<Action> actionList = _node.getActionsToGetToThisNode();			
 		
 		Collections.reverse(actionList);
 		

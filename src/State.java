@@ -1,3 +1,6 @@
+import java.util.HashSet;
+
+import logist.task.Task;
 import logist.task.TaskSet;
 import logist.topology.Topology.City;
 
@@ -12,9 +15,9 @@ public class State {
 
 	private City currentCity;
 	private TaskSet tasksToPickUp; // Tasks that haven't been picked up yet
-	private TaskSet carriedTasks; // Tasks that are currently being carried by the vehicle who's in this state
-	
-	public State(City currentCity, TaskSet taskSet, TaskSet carriedTasks) {
+	private HashSet<Task> carriedTasks; // Tasks that are currently being carried by the vehicle who's in this state
+
+	public State(City currentCity, TaskSet taskSet, HashSet<Task> carriedTasks) {
 		this.currentCity = currentCity;
 		this.tasksToPickUp = taskSet;
 		this.carriedTasks = carriedTasks;
@@ -35,7 +38,7 @@ public class State {
 		return this.currentCity;
 	}
 
-	public TaskSet getCarriedTasks() {
+	public HashSet<Task> getCarriedTasks() {
 		return this.carriedTasks;
 	}
 
