@@ -11,8 +11,8 @@ import logist.topology.Topology.City;
 public class State {
 
 	private City currentCity;
-	private TaskSet tasksToPickUp;
-	private TaskSet carriedTasks;
+	private TaskSet tasksToPickUp; // Tasks that haven't been picked up yet
+	private TaskSet carriedTasks; // Tasks that are currently being carried by the vehicle who's in this state
 
 	public State(City currentCity, TaskSet taskSet, TaskSet carriedTasks) {
 		this.currentCity = currentCity;
@@ -22,7 +22,7 @@ public class State {
 
 	@Override
 	public boolean equals(Object that) {
-		//TODO
+		// TODO
 		return false;
 	}
 
@@ -30,15 +30,15 @@ public class State {
 	public String toString() {
 		return this.currentCity + " " + this.tasksToPickUp + " " + this.carriedTasks;
 	}
-	
+
 	public City getCurrentCity() {
 		return this.currentCity;
 	}
-	
+
 	public TaskSet getCarriedTasks() {
 		return this.carriedTasks;
 	}
-	
+
 	public TaskSet getTasksToPickUp() {
 		return this.tasksToPickUp;
 	}
