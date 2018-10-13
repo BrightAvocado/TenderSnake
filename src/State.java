@@ -1,6 +1,3 @@
-import java.util.HashSet;
-
-import logist.task.Task;
 import logist.task.TaskSet;
 import logist.topology.Topology.City;
 
@@ -14,12 +11,12 @@ import logist.topology.Topology.City;
 public class State {
 
 	private City currentCity;
-	private TaskSet taskSet;
+	private TaskSet tasksToPickUp;
 	private TaskSet carriedTasks;
 
 	public State(City currentCity, TaskSet taskSet, TaskSet carriedTasks) {
 		this.currentCity = currentCity;
-		this.taskSet = taskSet;
+		this.tasksToPickUp = taskSet;
 		this.carriedTasks = carriedTasks;
 	}
 
@@ -31,7 +28,7 @@ public class State {
 
 	@Override
 	public String toString() {
-		return this.currentCity + " " + this.taskSet + " " + this.carriedTasks;
+		return this.currentCity + " " + this.tasksToPickUp + " " + this.carriedTasks;
 	}
 	
 	public City getCurrentCity() {
@@ -42,8 +39,8 @@ public class State {
 		return this.carriedTasks;
 	}
 	
-	public TaskSet getTaskSet() {
-		return this.taskSet;
+	public TaskSet getTasksToPickUp() {
+		return this.tasksToPickUp;
 	}
 
 }
