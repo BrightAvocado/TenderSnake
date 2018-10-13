@@ -1,6 +1,3 @@
-import java.util.HashSet;
-
-import logist.task.Task;
 import logist.task.TaskSet;
 import logist.topology.Topology.City;
 
@@ -14,24 +11,36 @@ import logist.topology.Topology.City;
 public class State {
 
 	private City currentCity;
-	private TaskSet ts;
-	private HashSet<Task> carriedTasks;
+	private TaskSet tasksToPickUp; // Tasks that haven't been picked up yet
+	private TaskSet carriedTasks; // Tasks that are currently being carried by the vehicle who's in this state
 
-	public State(City currentCity, TaskSet ts, HashSet<Task> carriedTasks) {
+	public State(City currentCity, TaskSet taskSet, TaskSet carriedTasks) {
 		this.currentCity = currentCity;
-		this.ts = ts;
+		this.tasksToPickUp = taskSet;
 		this.carriedTasks = carriedTasks;
 	}
 
 	@Override
 	public boolean equals(Object that) {
-		//TODO
+		// TODO
 		return false;
 	}
 
 	@Override
 	public String toString() {
-		//TODO
-		return "todo";
+		return this.currentCity + " " + this.tasksToPickUp + " " + this.carriedTasks;
 	}
+
+	public City getCurrentCity() {
+		return this.currentCity;
+	}
+
+	public TaskSet getCarriedTasks() {
+		return this.carriedTasks;
+	}
+
+	public TaskSet getTasksToPickUp() {
+		return this.tasksToPickUp;
+	}
+
 }
