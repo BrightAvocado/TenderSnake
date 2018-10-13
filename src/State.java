@@ -15,9 +15,9 @@ public class State {
 
 	private City currentCity;
 	private TaskSet taskSet;
-	private HashSet<Task> carriedTasks;
+	private TaskSet carriedTasks;
 
-	public State(City currentCity, TaskSet taskSet, HashSet<Task> carriedTasks) {
+	public State(City currentCity, TaskSet taskSet, TaskSet carriedTasks) {
 		this.currentCity = currentCity;
 		this.taskSet = taskSet;
 		this.carriedTasks = carriedTasks;
@@ -38,7 +38,7 @@ public class State {
 		return this.currentCity;
 	}
 	
-	public HashSet<Task> getCarriedTasks() {
+	public TaskSet getCarriedTasks() {
 		return this.carriedTasks;
 	}
 	
