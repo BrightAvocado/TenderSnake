@@ -39,7 +39,7 @@ public class Deliberative implements DeliberativeBehavior {
 		
 		// initialize the planner
 		int capacity = agent.vehicles().get(0).capacity();
-		String algorithmName = agent.readProperty("algorithm", String.class, "ASTAR");
+		String algorithmName = agent.readProperty("algorithm", String.class, "BFS");
 		
 		// Throws IllegalArgumentException if algorithm is unknown
 		algorithm = Algorithm.valueOf(algorithmName.toUpperCase());
@@ -51,6 +51,13 @@ public class Deliberative implements DeliberativeBehavior {
 	public Plan plan(Vehicle vehicle, TaskSet tasks) {
 		Plan plan;
 
+		//generate tree
+		City currentCity = vehicle.getCurrentCity();
+		TaskSet taskSet = this.agent.getTasks();
+		HashSet<Task> carriedTasks = new HashSet<Task>();
+		State state = new State(currentCity,taskSet,carriedTasks);
+		Tree tree = new Tree(state,capacity);
+		
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
 		case ASTAR:
@@ -59,7 +66,7 @@ public class Deliberative implements DeliberativeBehavior {
 			break;
 		case BFS:
 			// ...
-			plan = naivePlan(vehicle, tasks);
+			plan = bfsPlan(tree);
 			break;
 		default:
 			throw new AssertionError("Should not happen.");
@@ -68,7 +75,6 @@ public class Deliberative implements DeliberativeBehavior {
 		//TESTS ARE BEING MADE HERE. SERIOUS STUFF
 		State currentState = new State(vehicle.getCurrentCity(), tasks, new HashSet<Task>());
 		System.out.println(currentState.getTasksToPickUp());
-		Tree tree = new Tree(currentState, vehicle.capacity());
 		return plan;
 	}
 	

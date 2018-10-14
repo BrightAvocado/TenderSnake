@@ -1,11 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-
-import logist.topology.Topology.City;
 import logist.plan.Action;
 import logist.plan.Plan;
-import logist.simulation.Vehicle;
 
 public class BreadthFirstSearch {
 
@@ -20,8 +16,7 @@ public class BreadthFirstSearch {
 	Assumptions include that the tree only contains valid actions/states
 	*/
 	
-	public BreadthFirstSearch(Tree _tree){
-		//TODO		
+	public BreadthFirstSearch(Tree _tree){	
 		tree = _tree;
 	}
 	
@@ -65,8 +60,7 @@ public class BreadthFirstSearch {
 			else{
 				morePathsExist = true; //if there is at least one node that has a smaller distance AND has children, continue searching
 			}
-		}
-		
+		}		
 		return morePathsExist;
 	}
 	
@@ -77,7 +71,7 @@ public class BreadthFirstSearch {
 		ArrayList<Action> actionList = _node.getActionsToGetToThisNode();			
 		
 		Collections.reverse(actionList);
-		
+				
 		Plan plan = new Plan(rootNode.getState().getCurrentCity(),actionList);
 		
 		return plan;
@@ -85,7 +79,22 @@ public class BreadthFirstSearch {
 	
 	private void killNodeChildren(Node node){
 		//TODO: remove nodes from all next levels of tree that are not worth investigating (i.e. when parent's distance is > bestDistance)
-		
+		int level = node.getTreeLevel();
+		ArrayList<Node> nodeList = tree.getNodesAtLevel(level+1);
+		//recursively remove children from Tree (if there are children)
+		if(!node.isChildless()){
+			for(Node subNode : nodeList){
+				if(subNode.getParent() == node)
+				{
+					//if the child node's parent is the node we are currently removing, 
+					//then use this function to recursively remove it and it's children
+					killNodeChildren(subNode);
+				}
+			}
+		}
+		//also then remove parent
+		int nodeIndex = nodeList.indexOf(node);
+		tree.removeNode(level+1, nodeIndex);
 	}
 	
 	public Plan getBestPlan(){

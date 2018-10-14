@@ -13,10 +13,12 @@ public class Node {
 	private final int carriedWeight;
 	private final double distanceToRoot;
 	private final ArrayList<Action> actionsToGetToThisNode;
+	private final int treeLevel; 
 
-	public Node(Node parent, State state) {
+	public Node(Node parent, State state, int treeLevel) {
 		this.parent = parent;
 		this.state = state;
+		this.treeLevel = treeLevel;
 
 		if (this.parent != null) {// If the Node is NOT the rootNode
 			// Find the ONE task that has been REMOVED between this Node and its parent, IF
@@ -109,5 +111,9 @@ public class Node {
 	
 	public ArrayList<Action> getActionsToGetToThisNode() {
 		return this.actionsToGetToThisNode;
+	}
+	
+	public int getTreeLevel(){
+		return treeLevel;
 	}
 }
