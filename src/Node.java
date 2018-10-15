@@ -89,10 +89,6 @@ public class Node {
 		}
 	}
 
-	public boolean isChildless() {
-		return this.state.getTasksToPickUp().isEmpty() && this.state.getCarriedTasks().isEmpty();
-	}
-
 	public Node getParent() {
 		return this.parent;
 	}
@@ -108,7 +104,7 @@ public class Node {
 	public State getState() {
 		return this.state;
 	}
-	
+
 	public ArrayList<Action> getActionsToGetToThisNode() {
 		return this.actionsToGetToThisNode;
 	}

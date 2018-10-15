@@ -52,7 +52,7 @@ public class BreadthFirstSearch {
 			if (node.getDistanceToRoot() > bestDistance){
 				killNodeChildren(node);
 			}
-			else if (node.isChildless()){
+			else if (tree.isChildless(node)){
 				//if node is better than current best AND has no children, node becomes new best node
 				bestDistance = node.getDistanceToRoot();
 				bestNode = node;
@@ -82,7 +82,7 @@ public class BreadthFirstSearch {
 		int level = node.getTreeLevel();
 		ArrayList<Node> nodeList = tree.getNodesAtLevel(level+1);
 		//recursively remove children from Tree (if there are children)
-		if(!node.isChildless()){
+		if(!tree.isChildless(node)){
 			for(Node subNode : nodeList){
 				if(subNode.getParent() == node)
 				{
