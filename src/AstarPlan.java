@@ -19,7 +19,7 @@ public abstract class AstarPlan {
 	 * Do that again until you read an end node.
 	 * The path creates a Plan, and this is what this.plan is set to.
 	 */
-	private void computePlan() { // TODO: The plan doesn't actually need the tree to be made. Be smarter about it
+	private void computePlan() {
 		ArrayList<Node> path = new ArrayList<Node>();
 
 		// A* algo
@@ -31,7 +31,7 @@ public abstract class AstarPlan {
 			
 			// Find all of the nodes that have the greatest heuristic result
 			ArrayList<Node> nodesWithMaxHeuristicResult = new ArrayList<Node>();
-			double currentMaxHeuristicResult = 0;
+			double currentMaxHeuristicResult = Double.NEGATIVE_INFINITY;
 			for (Node node : directChildren) {
 				double heuristicResult = this.heuristic(node);
 				if (heuristicResult > currentMaxHeuristicResult) {
@@ -64,8 +64,8 @@ public abstract class AstarPlan {
 	 * This is the heuristic used by the A* algo.
 	 * 
 	 * @param node
-	 * @return an int between 0 and INF representing how "good" this node is. The
-	 *         higher the int the better the heuristic
+	 * @return a double representing how "good" this node is. The
+	 *         higher the double the better the heuristic
 	 */
 	abstract double heuristic(Node node);
 
