@@ -113,9 +113,14 @@ public class Deliberative implements DeliberativeBehavior {
 		return plan;
 	}
 
-	private Plan bfsPlan(Tree _tree) {
+	private Plan bfsPlan(Tree _tree){
+		Plan plan = null;
 		BreadthFirstSearch bfs = new BreadthFirstSearch(_tree);
-		Plan plan = bfs.getBestPlan();
+		boolean planFound = bfs.determineMasterPlan();
+		if(planFound){
+			plan = bfs.getBestPlan();
+		}
+			
 		return plan;
 	}
 

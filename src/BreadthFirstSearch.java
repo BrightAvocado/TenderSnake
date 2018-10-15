@@ -46,7 +46,7 @@ public class BreadthFirstSearch {
 		int levelSize = levelNodes.size();
 		boolean morePathsExist = false;
 		
-		for(int i = 0; i<levelSize;i++){
+		for(int i = levelSize-1; i>=0;i--){
 			//first ignore any nodes that are worse than the current best
 			Node node = levelNodes.get(i);
 			if (node.getDistanceToRoot() > bestDistance){
@@ -67,8 +67,24 @@ public class BreadthFirstSearch {
 	private Plan createNodePlan(Node _node){		
 		Node rootNode = tree.getRootNode();
 			
-		//move up from node until root is found, and create a list of actions in reverse	
-		ArrayList<Action> actionList = _node.getActionsToGetToThisNode();			
+		//move up from node until root is found, and create a list of actions in reverse
+		Node loopNode = _node;
+
+		ArrayList<Action> loopList = loopNode.getActionsToGetToThisNode();	
+		Collections.reverse(loopList);	
+		ArrayList<Action> actionList = loopList;
+		
+		while(loopNode != rootNode){
+			
+			loopNode = loopNode.getParent();
+			loopList = loopNode.getActionsToGetToThisNode();
+			Collections.reverse(loopList);
+			
+			for(Action action : loopList){
+				actionList.add(action);
+			}
+			
+		}
 		
 		Collections.reverse(actionList);
 				
@@ -78,7 +94,6 @@ public class BreadthFirstSearch {
 	}
 	
 	private void killNodeChildren(Node node){
-		//TODO: remove nodes from all next levels of tree that are not worth investigating (i.e. when parent's distance is > bestDistance)
 		int level = node.getTreeLevel();
 		ArrayList<Node> nodeList = tree.getNodesAtLevel(level+1);
 		//recursively remove children from Tree (if there are children)
