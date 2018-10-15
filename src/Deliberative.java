@@ -53,10 +53,9 @@ public class Deliberative implements DeliberativeBehavior {
 
 		//generate tree
 		City currentCity = vehicle.getCurrentCity();
-		TaskSet taskSet = this.agent.getTasks();
 		HashSet<Task> carriedTasks = new HashSet<Task>();
-		State state = new State(currentCity,taskSet,carriedTasks);
-		Tree tree = new Tree(state,capacity);
+		State state = new State(currentCity,tasks,carriedTasks);
+		Tree tree = new Tree(state,vehicle.capacity());
 		
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
