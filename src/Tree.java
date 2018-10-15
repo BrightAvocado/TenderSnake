@@ -7,50 +7,56 @@ import logist.task.TaskSet;
 import logist.topology.Topology.City;
 
 public class Tree {
+	// Nodes that constitute the tree. It can be uncomputed, and therefore null
 	private ArrayList<ArrayList<Node>> nodes;
 	private final Node rootNode;
 	private final int capacity;
 
-	public Tree(State currentState, int capacity) {
+	public Tree(State currentState, int capacity, boolean computeNodes) {
 		this.capacity = capacity;
 		/*
 		 * Node sitting at the top of the tree, parent of all the children, (dutiful
 		 * protector of the realm)
 		 */
-		this.nodes = new ArrayList<ArrayList<Node>>();
-		int currentLevel = 0;
-		// Create and add the rootNode to the tree
-		rootNode = new Node(null, currentState,currentLevel);
-		this.nodes.add(new ArrayList<Node>(Arrays.asList(rootNode)));
+		this.rootNode = new Node(null, currentState, 0);
 
 		// Populate the tree under the rootNode
+		if (computeNodes) {
 
-		boolean allNodesAtThisLevelAreChildless = this.isChildless(rootNode);
-		while (!allNodesAtThisLevelAreChildless) {
-			ArrayList<Node> nodesAtNextLevel = new ArrayList<Node>();
+			this.nodes = new ArrayList<ArrayList<Node>>();
+			this.nodes.add(new ArrayList<Node>(Arrays.asList(this.rootNode)));
 
-			for (Node node : this.getNodesAtLevel(currentLevel)) {
-				ArrayList<Node> childrenOfThisNode = this.generateChildren(node, capacity, currentLevel);
-				nodesAtNextLevel.addAll(childrenOfThisNode);
-			}
-			this.nodes.add(nodesAtNextLevel);
-			currentLevel++;
+			int currentLevel = 0;
 
-			// Find out if ALL the child at this level are childless
-			allNodesAtThisLevelAreChildless = true;
-			for (int i = 0; i < this.getNodesAtLevel(currentLevel).size() && allNodesAtThisLevelAreChildless; i++) {
-				Node node = this.getNodesAtLevel(currentLevel).get(i);
-				if (!this.isChildless(node)) {
-					allNodesAtThisLevelAreChildless = false;
+			boolean allNodesAtThisLevelAreChildless = this.isChildless(this.rootNode);
+			while (!allNodesAtThisLevelAreChildless) {
+				ArrayList<Node> nodesAtNextLevel = new ArrayList<Node>();
+
+				for (Node node : this.getNodesAtLevel(currentLevel)) {
+					ArrayList<Node> childrenOfThisNode = this.generateChildren(node, capacity, currentLevel);
+					nodesAtNextLevel.addAll(childrenOfThisNode);
+				}
+				this.nodes.add(nodesAtNextLevel);
+				currentLevel++;
+
+				// Find out if ALL the child at this level are childless
+				allNodesAtThisLevelAreChildless = true;
+				for (int i = 0; i < this.getNodesAtLevel(currentLevel).size() && allNodesAtThisLevelAreChildless; i++) {
+					Node node = this.getNodesAtLevel(currentLevel).get(i);
+					if (!this.isChildless(node)) {
+						allNodesAtThisLevelAreChildless = false;
+					}
 				}
 			}
+		} else {
+			this.nodes = null;
 		}
 
 	}
 
 	/*
-	 * Generate ALL the possible DIRECT children Nodes coming from parentNode
-	 * and using the carriedTasks and TaskSet of parentNode to find them
+	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
+	 * using the carriedTasks and TaskSet of parentNode to find them
 	 */
 	private ArrayList<Node> generateChildren(Node parentNode, int capacity, int currentLevel) {
 
@@ -63,8 +69,8 @@ public class Tree {
 	}
 
 	/*
-	 * Generate ALL the possible DIRECT children Nodes coming from parentNode
-	 * and using the TaskSet to find them
+	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
+	 * using the TaskSet to find them
 	 */
 	private ArrayList<Node> generateChildrenIssuedFromTasksToPickUp(Node parentNode, int capacity, int currentLevel) {
 		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
@@ -81,23 +87,23 @@ public class Tree {
 
 			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
 			childCarriedTasks.add(parentTaskToPickUp);
-			
+
 			City currentCity = parentTaskToPickUp.pickupCity;
-			
+
 			State childState = new State(currentCity, childTasksToPickUp, childCarriedTasks);
 
 			// ONLY the child Nodes who carriedWeight DOES NOT exceed the capacity are added
 			Node childNode = new Node(parentNode, childState, currentLevel);
 			if (childNode.getCarriedWeight() <= capacity) {
 				children.add(childNode);
-			}			
+			}
 		}
 		return children;
 	}
 
 	/*
-	 * Generate ALL the possible DIRECT children Nodes coming from parentNode
-	 * and using the carriedTasks to find them
+	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
+	 * using the carriedTasks to find them
 	 */
 	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode, int capacity, int currentLevel) {
 		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
@@ -156,11 +162,10 @@ public class Tree {
 	 * A Direct Child of a Node node is a node whose parent is this node. It is
 	 * therefore located of the level directly below this node.
 	 * 
-	 * @param node
-	 *            Node to which we need to find the DIRECT children of
-	 * @return an ArrayList<Node> with all the NEWLY GENERATED direct children.
-	 *         The list is empty if there is no children. null if node isn't on
-	 *         the level specified
+	 * @param node Node to which we need to find the DIRECT children of
+	 * @return an ArrayList<Node> with all the NEWLY GENERATED direct children. The
+	 *         list is empty if there is no children. null if node isn't on the
+	 *         level specified
 	 */
 	public ArrayList<Node> getDirectChildren(Node node) {
 		return this.generateChildren(node, this.capacity, node.getTreeLevel());
@@ -168,8 +173,8 @@ public class Tree {
 
 	/**
 	 * 
-	 * @return true if the node cannot generate any child (in the context of
-	 *         this tree), false otherwise
+	 * @return true if the node cannot generate any child (in the context of this
+	 *         tree), false otherwise
 	 */
 	public boolean isChildless(Node node) {
 		ArrayList<Node> children = this.generateChildren(node, this.capacity, node.getTreeLevel());
