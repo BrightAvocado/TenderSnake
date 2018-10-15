@@ -1,6 +1,7 @@
 /* import table */
 import logist.simulation.Vehicle;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import logist.agent.Agent;
@@ -53,17 +54,23 @@ public class Deliberative implements DeliberativeBehavior {
 
 		//generate tree
 		City currentCity = vehicle.getCurrentCity();
+		
+		//This is super ugly TODO make it pretty
+		ArrayList<Task> a = new ArrayList<Task>();
+		for (Object task : vehicle.getCurrentTasks().toArray()) {
+			a.add((Task) task);
+		}
 		HashSet<Task> carriedTasks = new HashSet<Task>();
+		carriedTasks.addAll(a);
 		State state = new State(currentCity,tasks,carriedTasks);
 		Tree tree = new Tree(state,vehicle.capacity());
 		
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
 		case ASTAR:
-//			State state = new State(vehicle.getCurrentCity(), tasks, new HashSet<Task>());
-//			Tree tree = new Tree(state, vehicle.capacity());
 			AstarPlanWithRandomHeuristic astar = new AstarPlanWithRandomHeuristic(tree);
 			plan = astar.getPlan();
+			System.out.println(plan);
 			break;
 		case BFS:
 			// ...
@@ -110,11 +117,6 @@ public class Deliberative implements DeliberativeBehavior {
 
 	@Override
 	public void planCancelled(TaskSet carriedTasks) {
-		
-		if (!carriedTasks.isEmpty()) {
-			// This cannot happen for this simple agent, but typically
-			// you will need to consider the carriedTasks when the next
-			// plan is computed.
-		}
+		//Nothing needs to be done here
 	}
 }
