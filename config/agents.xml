@@ -19,4 +19,9 @@
 		<set class-name="Deliberative"/>
 		<set algorithm="ASTAR"/>
 	</agent>
+	<agent name="deliberative-BFS">
+		<set class-path="bin/"/>
+		<set class-name="Deliberative"/>
+		<set algorithm="BFS"/>
+	</agent>
 </agents>
