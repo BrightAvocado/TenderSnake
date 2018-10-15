@@ -72,7 +72,7 @@ public class Deliberative implements DeliberativeBehavior {
 		switch (algorithm) {
 		case ASTAR:
 			tree = new Tree(state,vehicle.capacity(), false);
-			AstarPlanWithRandomHeuristic astar = new AstarPlanWithRandomHeuristic(tree);
+			AstarPlanWithDistanceToRootHeuristic astar = new AstarPlanWithDistanceToRootHeuristic(tree);
 			plan = astar.getPlan();
 			System.out.println(plan);
 			break;
