@@ -6,9 +6,11 @@ import logist.task.Task;
 import logist.task.TaskSet;
 
 public class Tree {
-	private ArrayList<ArrayList<Node>> nodes;
+	private final ArrayList<ArrayList<Node>> nodes;
+	private final int capacity;
 
 	public Tree(State currentState, int capacity) {
+		this.capacity = capacity;
 		/*
 		 * Node sitting at the top of the tree, parent of all the children, (dutiful
 		 * protecter of the realm)
@@ -20,7 +22,7 @@ public class Tree {
 		this.nodes.add(new ArrayList<Node>(Arrays.asList(rootNode)));
 
 		// Populate the tree under the rootNode
-		boolean allNodesAtThisLevelAreChildless = rootNode.isChildless();
+		boolean allNodesAtThisLevelAreChildless = this.isChildless(rootNode);
 		int currentLevel = 0;
 		while (!allNodesAtThisLevelAreChildless) {
 			ArrayList<Node> nodesAtNextLevel = new ArrayList<Node>();
@@ -36,7 +38,7 @@ public class Tree {
 			allNodesAtThisLevelAreChildless = true;
 			for (int i = 0; i < this.getNodesAtLevel(currentLevel).size() && allNodesAtThisLevelAreChildless; i++) {
 				Node node = this.getNodesAtLevel(currentLevel).get(i);
-				if (!node.isChildless()) {
+				if (!this.isChildless(node)) {
 					allNodesAtThisLevelAreChildless = false;
 				}
 			}
@@ -63,7 +65,6 @@ public class Tree {
 	 * using the TaskSet to find them
 	 */
 	private ArrayList<Node> generateChildrenIssuedFromTasksToPickUp(Node parentNode, int capacity) {
-		// TODO Auto-generated method stub
 		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
 		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
 
@@ -75,7 +76,7 @@ public class Tree {
 
 			TaskSet childTasksToPickUp = parentTasksToPickUp.clone();
 			childTasksToPickUp.remove(parentTaskToPickUp);
-			
+
 			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
 			childCarriedTasks.add(parentTaskToPickUp);
 
@@ -109,7 +110,8 @@ public class Tree {
 
 			State childState = new State(parentCarriedTask.deliveryCity, parentTasksToPickUp, childCarriedTasks);
 
-			// ONLY the child Nodes whose carriedWeight DOES NOT exceed the capacity are added
+			// ONLY the child Nodes whose carriedWeight DOES NOT exceed the capacity are
+			// added
 			Node childNode = new Node(parentNode, childState);
 			if (childNode.getCarriedWeight() <= capacity) {
 				children.add(new Node(parentNode, childState));
@@ -119,20 +121,44 @@ public class Tree {
 		return children;
 	}
 
-	/*
-	 * Not very necessary, but right now, if there are several tasks that can be
-	 * picked up in one city, each "pick up" would be one node. A neat thing to do
-	 * would be to "compress" all these actions in one city into only ONE node. To
-	 * do that, go through the tree looking for nodes who are in the same city as
-	 * their parent. Is it really worth it though since I'd have to look through the
-	 * tree ? Maybe it should be implemented directly when building the tree.
-	 */
-	private void compress() {
-		// TODO
-	}
-
 	public ArrayList<Node> getNodesAtLevel(int level) {
 		return this.nodes.get(level);
 	}
 
+	public ArrayList<ArrayList<Node>> getNodes() {
+		return this.nodes;
+	}
+
+	/**
+	 * The root node is the nood from which all the other nodes come from
+	 * 
+	 * @return the root node of this tree.
+	 */
+	public Node getRootNode() {
+		return this.getNodesAtLevel(0).get(0);
+	}
+
+	/**
+	 * A Direct Child of a Node node is a node whose parent is this node. 
+	 * It is therefore located of the level directly below this node.
+	 * @param node Node to which we need to find the DIRECT children of
+	 * @return an ArrayList<Node> with all the NEWLY GENERATED direct children. The list is empty if there is no children. 
+	 * null if node isn't on the level specified
+	 */
+	public ArrayList<Node> getDirectChildren(Node node) {
+		return this.generateChildren(node, this.capacity);
+	}
+
+	/**
+	 * 
+	 * @return true if the node cannot generate any child (in the context of this tree), false otherwise
+	 */
+	public boolean isChildless(Node node) {
+		ArrayList<Node> children = this.generateChildren(node, this.capacity);
+		if (children.isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

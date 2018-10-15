@@ -54,8 +54,10 @@ public class Deliberative implements DeliberativeBehavior {
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
 		case ASTAR:
-			// ...
-			plan = naivePlan(vehicle, tasks);
+			State state = new State(vehicle.getCurrentCity(), tasks, new HashSet<Task>());
+			Tree tree = new Tree(state, vehicle.capacity());
+			AstarPlanWithRandomHeuristic astar = new AstarPlanWithRandomHeuristic(tree);
+			plan = astar.getPlan();
 			break;
 		case BFS:
 			// ...
