@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
-
 import logist.plan.Action;
 import logist.plan.Plan;
 
@@ -28,9 +26,7 @@ public abstract class AstarPlan {
 		Node chosenNode = this.tree.getRootNode();
 		path.add(chosenNode);
 		
-		int level = 0;
 		while (!this.tree.isChildless(chosenNode)) {
-			level++;
 			ArrayList<Node> directChildren = this.tree.getDirectChildren(chosenNode);
 			
 			// Find all of the nodes that have the greatest heuristic result
