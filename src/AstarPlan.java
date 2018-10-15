@@ -26,6 +26,7 @@ public abstract class AstarPlan {
 		Node chosenNode = this.tree.getRootNode();
 		path.add(chosenNode);
 		
+		//TODO carriedWeight is badly initialized . fix it
 		while (!this.tree.isChildless(chosenNode)) {
 			ArrayList<Node> directChildren = this.tree.getDirectChildren(chosenNode);
 			
@@ -51,6 +52,10 @@ public abstract class AstarPlan {
 		ArrayList<Action> actionsFromRootNodeToEndNode = new ArrayList<Action>();
 		for (Node node : path) {
 			actionsFromRootNodeToEndNode.addAll(node.getActionsToGetToThisNode());
+			//DEBUG
+			if (node.getCarriedWeight() > 30) {
+				System.out.println("HERE");
+			}
 		}
 		
 		
