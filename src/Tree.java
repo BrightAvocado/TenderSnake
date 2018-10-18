@@ -62,8 +62,8 @@ public class Tree {
 
 		ArrayList<Node> children = new ArrayList<Node>();
 
-		children.addAll(generateChildrenIssuedFromDeliveries(parentNode, capacity, currentLevel));
-		children.addAll(generateChildrenIssuedFromTasksToPickUp(parentNode, capacity, currentLevel));
+		children.addAll(generateChildrenIssuedFromDeliveries(parentNode, capacity, currentLevel + 1));
+		children.addAll(generateChildrenIssuedFromTasksToPickUp(parentNode, capacity, currentLevel + 1));
 
 		return children;
 	}
@@ -183,5 +183,10 @@ public class Tree {
 		} else {
 			return false;
 		}
+	}
+	
+	public boolean isGoalNode(Node node) {
+		State state = node.getState();
+		return state.getCarriedTasks().isEmpty() && state.getTasksToPickUp().isEmpty();
 	}
 }

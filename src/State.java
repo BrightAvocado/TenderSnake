@@ -25,8 +25,11 @@ public class State {
 
 	@Override
 	public boolean equals(Object that) {
-		// TODO
-		return false;
+		 if (!(that instanceof State)) {
+			 return false;
+		 }
+		 State state = (State) that;
+		 return (this.currentCity == state.currentCity) && (this.tasksToPickUp == state.tasksToPickUp) && (this.carriedTasks == state.carriedTasks);
 	}
 
 	@Override

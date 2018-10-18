@@ -1,80 +1,108 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+
 import logist.plan.Action;
 import logist.plan.Plan;
 
 public abstract class AstarPlan {
-	private Tree tree;
+	protected Tree tree;
 	private Plan plan;
 
 	public AstarPlan(Tree tree) {
 		this.tree = tree;
-		computePlan();
+		this.plan = null;
 	}
 
 	/**
-	 * Compute the Plan according to the A* algo and the heuristic.
-	 * It works this way :
-	 * For each level, find the node with the highest score (according to one arbitrary heuristic.
-	 * The first node who qualifies is added to the path.
-	 * Do that again until you read an end node.
-	 * The path creates a Plan, and this is what this.plan is set to.
+	 * Compute the Plan according to the A* algo and the heuristic. It works this
+	 * way : For each level, find the node with the highest score (according to one
+	 * arbitrary heuristic. The first node who qualifies is added to the path. Do
+	 * that again until you read an end node. The path creates a Plan, and this is
+	 * what this.plan is set to.
 	 */
-	private void computePlan() {
-		ArrayList<Node> path = new ArrayList<Node>();
+	public void computePlan() {
+		ArrayList<Node> Q = new ArrayList<Node>();
+		/*
+		 * Map with the ALREADY CONSIDERED STATES as keys and their distance to Root as
+		 * value
+		 */
+		HashMap<State, Double> C = new HashMap<State, Double>();
 
 		// A* algo
-		Node chosenNode = this.tree.getRootNode();
-		path.add(chosenNode);
-		
-		//TODO carriedWeight is badly initialized . fix it
-		while (!this.tree.isChildless(chosenNode)) {
-			ArrayList<Node> directChildren = this.tree.getDirectChildren(chosenNode);
-			
-			// Find all of the nodes that have the greatest heuristic result
-			ArrayList<Node> nodesWithMaxHeuristicResult = new ArrayList<Node>();
-			double currentMaxHeuristicResult = Double.NEGATIVE_INFINITY;
-			for (Node node : directChildren) {
-				double heuristicResult = this.heuristic(node);
-				if (heuristicResult > currentMaxHeuristicResult) {
-					currentMaxHeuristicResult = heuristicResult;
-					nodesWithMaxHeuristicResult = new ArrayList<Node>();
-					nodesWithMaxHeuristicResult.add(node);
-				} else if (heuristicResult == currentMaxHeuristicResult) {
-					nodesWithMaxHeuristicResult.add(node);
-				}
+
+		// We start at the root node
+		Node currentNode = this.tree.getRootNode();
+		Q.add(currentNode);
+
+		while (!Q.isEmpty()) {
+			currentNode = Q.get(0);
+			Q.remove(0);
+			if (this.tree.isGoalNode(currentNode)) {// If n is a goal node
+				break;
 			}
-			
-			//The chosenNode is the first node in the childrenNode whose heuristic result is the highest
-			chosenNode = nodesWithMaxHeuristicResult.get(0);
-			path.add(chosenNode);
+			State currentState = currentNode.getState();
+			if (!C.containsKey(currentState) || C.get(currentState) > currentNode.getDistanceToRoot()) {
+				C.put(currentNode.getState(), currentNode.getDistanceToRoot());
+				ArrayList<Node> S = this.tree.getDirectChildren(currentNode);
+				Q.addAll(S);
+				Q.sort(new SortByHeuristic(this));
+			}
 		}
-		
+
 		ArrayList<Action> actionsFromRootNodeToEndNode = new ArrayList<Action>();
-		for (Node node : path) {
-			actionsFromRootNodeToEndNode.addAll(node.getActionsToGetToThisNode());
-			//DEBUG
-			if (node.getCarriedWeight() > 30) {
-				System.out.println("HERE");
-			}
+
+		while (currentNode.getParent() != null) {
+			actionsFromRootNodeToEndNode.addAll(0, currentNode.getActionsToGetToThisNode());
+			currentNode = currentNode.getParent();
 		}
-		
-		
+
 		Plan plan = new Plan(this.tree.getRootNode().getState().getCurrentCity(), actionsFromRootNodeToEndNode);
 
-		
 		this.plan = plan;
 	}
 
 	/**
-	 * This is the heuristic used by the A* algo.
+	 * This is the heuristic of the A* algo
+	 * @param node
+	 * @return the cost to go from the root node to node
+	 */
+	abstract double h(Node node);
+
+	private double f(Node node) {
+		return this.g(node) + this.h(node);
+	}
+
+	/**
 	 * 
 	 * @param node
-	 * @return a double representing how "good" this node is. The
-	 *         higher the double the better the heuristic
+	 * @return the cost to go from the root node to node
 	 */
-	abstract double heuristic(Node node);
+	private double g(Node node) {
+		return node.getDistanceToRoot();
+	}
 
 	public Plan getPlan() {
 		return this.plan;
 	}
+
+	class SortByHeuristic implements Comparator<Node> {
+		private AstarPlan astarPlan;
+
+		public SortByHeuristic(AstarPlan astarPlan) {
+			this.astarPlan = astarPlan;
+		}
+
+		public int compare(Node a, Node b) {
+			if (this.astarPlan.f(b) > this.astarPlan.f(a)) {
+				return -1;
+			} else if (this.astarPlan.f(b) < this.astarPlan.f(a)) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
+
 }
