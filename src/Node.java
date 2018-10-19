@@ -13,7 +13,7 @@ public class Node {
 	private final int carriedWeight;
 	private final double distanceToRoot;
 	private final ArrayList<Action> actionsToGetToThisNode;
-	private final int treeLevel; 
+	private final int treeLevel;
 
 	public Node(Node parent, State state, int treeLevel) {
 		this.parent = parent;
@@ -111,5 +111,14 @@ public class Node {
 	
 	public int getTreeLevel(){
 		return treeLevel;
+	}
+	
+	@Override
+	public boolean equals(Object that) {
+		 if (!(that instanceof Node)) {
+			 return false;
+		 }
+		 Node node = (Node) that;
+		 return (this.state == node.state) && (this.treeLevel == node.treeLevel); //Is this really a good way to check equality ?
 	}
 }

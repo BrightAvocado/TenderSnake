@@ -47,6 +47,9 @@ public class Tree {
 						allNodesAtThisLevelAreChildless = false;
 					}
 				}
+				
+				//DEBUG
+				System.out.println(currentLevel);
 			}
 		} else {
 			this.nodes = null;

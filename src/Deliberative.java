@@ -72,14 +72,30 @@ public class Deliberative implements DeliberativeBehavior {
 		switch (algorithm) {
 		case ASTAR:
 			tree = new Tree(state,vehicle.capacity(), false);
-			AstarPlanWithUnderestimatingHeuristic astar = new AstarPlanWithUnderestimatingHeuristic(tree);
+			AstarPlan astar = new AstarPlanWithUnderestimatingHeuristic(tree);
 			astar.computePlan();
 			plan = astar.getPlan();
 			System.out.println(plan);
 			break;
 		case BFS:
+			//tree = new Tree(state,vehicle.capacity(), false);
+			
+			//DEBUG
+			int i = 0;
 			tree = new Tree(state,vehicle.capacity(), true);
-			plan = bfsPlan(tree);
+			for (ArrayList<Node> nodes : tree.getNodes()) {
+				for (Node node : nodes) {
+					i++;
+				}
+			}
+			System.out.println("We have " + i + " nodes.");
+			//!DEBUG
+			
+			
+			BFSIdea bfs = new BFSIdea(tree);
+			bfs.computePlan();
+			plan = bfs.getPlan();
+			System.out.println(plan);
 			break;
 		default:
 			throw new AssertionError("Should not happen.");
