@@ -78,6 +78,20 @@ public class Tree {
 			// The action that's being made is "go to that task's pickup city and pick up
 			// the task"
 
+			City currentCity = parentNode.getState().getCurrentCity();
+			City taskCity = parentTaskToPickUp.pickupCity;
+		    ArrayList<City> path = currentCity.pathTo(taskCity);
+
+		    for(Task carriedTask : parentCarriedTasks){
+
+			    if (path.contains(carriedTask.deliveryCity)){
+			    	//create only delivery Task.
+			    	//remove delivery Task from parentCarriedTasks
+			    	//see final step at bottom of this function :)
+			    }
+			    	
+		    }
+		    
 			TaskSet childTasksToPickUp = parentTasksToPickUp.clone();
 			childTasksToPickUp.remove(parentTaskToPickUp);
 
@@ -94,6 +108,7 @@ public class Tree {
 				children.add(childNode);
 			}
 		}
+		//add children from generate children issued from deliveries here instead of calling it separately. This way the carriedTasksList changes aren't lost
 		return children;
 	}
 
