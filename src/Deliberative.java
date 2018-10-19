@@ -77,7 +77,8 @@ public class Deliberative implements DeliberativeBehavior {
 			System.out.println(plan);
 			break;
 		case BFS:
-			tree = new Tree(state,vehicle.capacity(), true);
+			tree = new Tree(state,vehicle.capacity(), false);
+			System.out.println("Tree Generated"); //for debugging
 			plan = bfsPlan(tree);
 			break;
 		default:

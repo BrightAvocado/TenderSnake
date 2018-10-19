@@ -15,7 +15,6 @@ public class BreadthFirstSearch {
 	Inputs are vehicle and tree
 	Assumptions include that the tree only contains valid actions/states
 	*/
-	
 	public BreadthFirstSearch(Tree _tree){	
 		tree = _tree;
 	}
@@ -28,6 +27,15 @@ public class BreadthFirstSearch {
 		int currentLevel = 0; 
 				
 		while(potentialChoicesExist){
+			if(potentialChoicesExist)
+			{
+				ArrayList<Node> newNodes = new ArrayList<Node>();
+				for(Node node : tree.getNodesAtLevel(currentLevel)){
+					newNodes.addAll(tree.generateChildren(node, tree.getCapacity(), currentLevel));
+				}
+				//Generate Children of Surviving Nodes Here:
+				tree.addLevel(newNodes);
+			}
 			potentialChoicesExist = checkLevel(currentLevel);
 			currentLevel++; //go down one level (will only matter if checkLevel returns true (that there are more paths to check)
 		}
@@ -50,7 +58,8 @@ public class BreadthFirstSearch {
 			//first ignore any nodes that are worse than the current best
 			Node node = levelNodes.get(i);
 			if (node.getDistanceToRoot() > bestDistance){
-				killNodeChildren(node);
+				//killNodeChildren(node);
+				killNode(level,i);
 			}
 			else if (tree.isChildless(node)){
 				//if node is better than current best AND has no children, node becomes new best node
@@ -65,51 +74,22 @@ public class BreadthFirstSearch {
 	}
 	
 	private Plan createNodePlan(Node _node){		
-		Node rootNode = tree.getRootNode();
-			
-		//move up from node until root is found, and create a list of actions in reverse
-		Node loopNode = _node;
 
-		ArrayList<Action> loopList = loopNode.getActionsToGetToThisNode();	
-		Collections.reverse(loopList);	
-		ArrayList<Action> actionList = loopList;
-		
-		while(loopNode != rootNode){
-			
-			loopNode = loopNode.getParent();
-			loopList = loopNode.getActionsToGetToThisNode();
-			Collections.reverse(loopList);
-			
-			for(Action action : loopList){
-				actionList.add(action);
-			}
-			
+		Node currentNode = _node;
+		ArrayList<Action> actionsFromRootNodeToEndNode = new ArrayList<Action>();
+
+		while (currentNode.getParent() != null) {
+			actionsFromRootNodeToEndNode.addAll(0, currentNode.getActionsToGetToThisNode());
+			currentNode = currentNode.getParent();
 		}
-		
-		Collections.reverse(actionList);
-				
-		Plan plan = new Plan(rootNode.getState().getCurrentCity(),actionList);
+
+		Plan plan = new Plan(this.tree.getRootNode().getState().getCurrentCity(), actionsFromRootNodeToEndNode);
 		
 		return plan;
 	}
 	
-	private void killNodeChildren(Node node){
-		int level = node.getTreeLevel();
-		ArrayList<Node> nodeList = tree.getNodesAtLevel(level+1);
-		//recursively remove children from Tree (if there are children)
-		if(!tree.isChildless(node)){
-			for(Node subNode : nodeList){
-				if(subNode.getParent() == node)
-				{
-					//if the child node's parent is the node we are currently removing, 
-					//then use this function to recursively remove it and it's children
-					killNodeChildren(subNode);
-				}
-			}
-		}
-		//also then remove parent
-		int nodeIndex = nodeList.indexOf(node);
-		tree.removeNode(level+1, nodeIndex);
+	private void killNode(int index, int level){		
+		tree.removeNode(level, index);
 	}
 	
 	public Plan getBestPlan(){

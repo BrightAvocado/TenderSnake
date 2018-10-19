@@ -19,12 +19,11 @@ public class Tree {
 		 * protector of the realm)
 		 */
 		this.rootNode = new Node(null, currentState, 0);
-
+		this.nodes = new ArrayList<ArrayList<Node>>();
+		this.nodes.add(new ArrayList<Node>(Arrays.asList(this.rootNode)));
+		
 		// Populate the tree under the rootNode
 		if (computeNodes) {
-
-			this.nodes = new ArrayList<ArrayList<Node>>();
-			this.nodes.add(new ArrayList<Node>(Arrays.asList(this.rootNode)));
 
 			int currentLevel = 0;
 
@@ -48,20 +47,17 @@ public class Tree {
 					}
 				}
 			}
-		} else {
-			this.nodes = null;
 		}
-
 	}
 
 	/*
 	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
 	 * using the carriedTasks and TaskSet of parentNode to find them
 	 */
-	private ArrayList<Node> generateChildren(Node parentNode, int capacity, int currentLevel) {
+	public ArrayList<Node> generateChildren(Node parentNode, int capacity, int currentLevel) {
 
 		ArrayList<Node> children = new ArrayList<Node>();
-
+		
 		children.addAll(generateChildrenIssuedFromDeliveries(parentNode, capacity, currentLevel));
 		children.addAll(generateChildrenIssuedFromTasksToPickUp(parentNode, capacity, currentLevel));
 
@@ -105,12 +101,12 @@ public class Tree {
 	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
 	 * using the carriedTasks to find them
 	 */
-	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode, int capacity, int currentLevel) {
+	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode, int capacity, int currentLevel) {		
 		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
 		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
 
 		ArrayList<Node> children = new ArrayList<Node>();
-
+		
 		for (Task parentCarriedTask : parentCarriedTasks) {
 			// The action that's being made is "go to that task's delivery city
 			// and deliver
@@ -122,12 +118,8 @@ public class Tree {
 
 			// ONLY the child Nodes whose carriedWeight DOES NOT exceed the
 			// capacity are added
-			Node childNode = new Node(parentNode, childState, currentLevel);
-			if (childNode.getCarriedWeight() <= capacity) {
-				children.add(new Node(parentNode, childState, currentLevel));
-			}
+			children.add(new Node(parentNode, childState, currentLevel));
 		}
-
 		return children;
 	}
 
@@ -148,13 +140,13 @@ public class Tree {
 		return this.nodes.get(level);
 	}
 
-	// removes a specified node from the tree. Useful for pruning or removing
-	// worthless options while searching
-	// It is my understanding that, because I have passed in the tree to the BFS
-	// class as an instance variable,
-	// the original tree will be unaffected, and instead only the local copy
-	// will be changed.
-	public void removeNode(int currentLevel, int nodeIndex) {
+	/* removes a specified node from the tree. Useful for pruning or removing
+	worthless options while searching
+	It is my understanding that, because I have passed in the tree to the BFS
+	class as an instance variable,
+	the original tree will be unaffected, and instead only the local copy
+	will be changed. */
+	public void removeNode(int nodeIndex, int currentLevel) {
 		nodes.get(currentLevel).remove(nodeIndex);
 	}
 
@@ -183,5 +175,14 @@ public class Tree {
 		} else {
 			return false;
 		}
+	}
+	
+	public void addLevel(ArrayList<Node> newLevelNodes)
+	{		
+		nodes.add(newLevelNodes);
+	}
+	
+	public int getCapacity(){
+		return this.capacity;
 	}
 }
