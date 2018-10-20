@@ -66,7 +66,7 @@ public class Tree {
 
 		ArrayList<Node> children = new ArrayList<Node>();
 
-		children.addAll(generateChildrenIssuedFromDeliveries(parentNode, capacity, currentLevel + 1));
+		children.addAll(generateChildrenIssuedFromDeliveries(parentNode, currentLevel + 1));
 		children.addAll(generateChildrenIssuedFromTasksToPickUp(parentNode, capacity, currentLevel + 1));
 
 		return children;
@@ -74,11 +74,28 @@ public class Tree {
 
 	/*
 	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
-	 * using the TaskSet to find them
+	 * using the TaskSet to find them. These includes the nodes who consist of
+	 * solely picking up a task, AND those who deliver tasks and pick up a task in
+	 * the same city.
 	 */
 	private ArrayList<Node> generateChildrenIssuedFromTasksToPickUp(Node parentNode, int capacity, int currentLevel) {
+
 		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
 		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
+
+		// Each delivery cities, with the tasks that need to be delivered there
+		HashMap<City, ArrayList<Task>> deliveryCities2Tasks = new HashMap<City, ArrayList<Task>>();
+
+		// Initiliaze and populate deliveryCities2Tasks
+		for (Task parentCarriedTask : parentCarriedTasks) {
+			if (deliveryCities2Tasks.containsKey(parentCarriedTask.deliveryCity)) {
+				deliveryCities2Tasks.get(parentCarriedTask.deliveryCity).add(parentCarriedTask);
+			} else {
+				ArrayList<Task> tasks = new ArrayList<Task>();
+				tasks.add(parentCarriedTask);
+				deliveryCities2Tasks.put(parentCarriedTask.deliveryCity, tasks);
+			}
+		}
 
 		ArrayList<Node> children = new ArrayList<Node>();
 
@@ -86,11 +103,21 @@ public class Tree {
 			// The action that's being made is "go to that task's pickup city and pick up
 			// the task"
 
+			// Handle the transfer of the picked up task from the tasksToPickUp to
+			// carriedTasks
 			TaskSet childTasksToPickUp = parentTasksToPickUp.clone();
 			childTasksToPickUp.remove(parentTaskToPickUp);
-
 			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
 			childCarriedTasks.add(parentTaskToPickUp);
+
+			// Handle the delivery of tasks IF THERE ARE some that needs to be delivered in
+			// the parentTaskToPickUp's pickupCity
+			if (deliveryCities2Tasks.get(parentTaskToPickUp.pickupCity) != null) {
+				for (Task parentTaskToDeliverInThePickupCity : deliveryCities2Tasks
+						.get(parentTaskToPickUp.pickupCity)) {
+					childCarriedTasks.remove(parentTaskToDeliverInThePickupCity);
+				}
+			}
 
 			City currentCity = parentTaskToPickUp.pickupCity;
 
@@ -110,7 +137,7 @@ public class Tree {
 	 * using the carriedTasks to find them. Those are the NODES who ONLY consists of
 	 * deliveries
 	 */
-	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode, int capacity, int currentLevel) {
+	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode, int currentLevel) {
 		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
 
 		// Each delivery cities, with the tasks that need to be delivered there
@@ -136,12 +163,10 @@ public class Tree {
 			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
 			childCarriedTasks.removeAll(tasksToDeliver);
 
-			State childState = new State(tasksToDeliver.get(0).deliveryCity, 
-					parentNode.getState().getTasksToPickUp(),
+			State childState = new State(tasksToDeliver.get(0).deliveryCity, parentNode.getState().getTasksToPickUp(),
 					childCarriedTasks);
-			
-			children.add(new Node(parentNode, childState, currentLevel));
 
+			children.add(new Node(parentNode, childState, currentLevel));
 		}
 
 		return children;
