@@ -21,17 +21,9 @@ public class Node {
 		this.treeLevel = treeLevel;
 
 		if (this.parent != null) {// If the Node is NOT the rootNode
-			// Find the ONE task that has been REMOVED between this Node and its parent, IF
-			// there is one
-			Task removedTask = null;
-			for (Task parentTask : this.parent.state.getCarriedTasks()) {
-				if (!this.state.getCarriedTasks().contains(parentTask)) {
-					removedTask = parentTask;
-					break;
-				}
-			}
 
-			// Find the ONE task that has been ADDED between this Node and its parent, IF
+			// Find the ONE task that has been ADDED (picked up) between this Node and its
+			// parent, IF
 			// there is one
 			Task addedTask = null;
 			for (Task task : this.state.getCarriedTasks()) {
@@ -41,11 +33,22 @@ public class Node {
 				}
 			}
 
+			// Find ALL the tasks that have been REMOVED (delivered) between this Node and
+			// its parent, IF
+			// there are some
+			ArrayList<Task> removedTasks = new ArrayList<Task>();
+			for (Task parentTask : this.parent.state.getCarriedTasks()) {
+				if (!this.state.getCarriedTasks().contains(parentTask)) {
+					removedTasks.add(parentTask);
+				}
+			}
+
 			// Compute the carriedWeight of this Node
 			int weightChange = 0;
 			if (addedTask != null) {
 				weightChange += addedTask.weight;
-			} else {
+			}
+			for (Task removedTask : removedTasks) {
 				weightChange -= removedTask.weight;
 			}
 			this.carriedWeight = this.parent.carriedWeight + weightChange;
@@ -57,28 +60,42 @@ public class Node {
 
 			// Compute the actionsToGetToThisNode of this Node
 			/*
-			 * Between this Node and its parent, EITHER a Task has been added (pick up) OR a
-			 * Task has been removed (delivery). It HAS to be one of those two
+			 * Between this Node and its parent, EITHER ONE Task has been added (pick up)
+			 * and NONE has been removed (delivered) OR ONE Task has been added (pick up)
+			 * and some have been removed (delivered) OR NO Task has been added (pick up)
+			 * and some have been removed (delivered) It HAS to be one of those three
 			 */
 			ArrayList<Action> actionsToGetToThisNode = new ArrayList<Action>();
-			if (removedTask != null) { // Delivery
-				// Go where the task to deliver needs to be delivered
-				City parentCity = this.parent.state.getCurrentCity();
-				for (City city : parentCity.pathTo(removedTask.deliveryCity)) {
-					actionsToGetToThisNode.add(new Move(city));
-				}
+			if (addedTask != null) { // Pickup
 
-				// Deliver the task
-				actionsToGetToThisNode.add(new Delivery(removedTask));
-			} else if (addedTask != null) { // Pickup
 				// Go where the task to pick up needs to be picked up
 				City parentCity = this.parent.state.getCurrentCity();
 				for (City city : parentCity.pathTo(addedTask.pickupCity)) {
 					actionsToGetToThisNode.add(new Move(city));
 				}
 
+				// Deliver all the tasks that can be delivered
+				for (Task removedTask : removedTasks) {
+					if (removedTask.deliveryCity == addedTask.pickupCity) {
+						actionsToGetToThisNode.add(new Delivery(removedTask));
+					}
+				}
+
 				// Pick up the task
 				actionsToGetToThisNode.add(new Pickup(addedTask));
+
+			} else if (!removedTasks.isEmpty()) { // Delivery
+				// Go where the task to deliver needs to be delivered
+				City parentCity = this.parent.state.getCurrentCity();
+				// It is assumed that all the removedTasks have the same delivery city
+				for (City city : parentCity.pathTo(removedTasks.get(0).deliveryCity)) {
+					actionsToGetToThisNode.add(new Move(city));
+				}
+
+				// Deliver ALL the tasks
+				for (Task removedTask : removedTasks) {
+					actionsToGetToThisNode.add(new Delivery(removedTask));
+				}
 			}
 			this.actionsToGetToThisNode = actionsToGetToThisNode;
 
@@ -108,17 +125,18 @@ public class Node {
 	public ArrayList<Action> getActionsToGetToThisNode() {
 		return this.actionsToGetToThisNode;
 	}
-	
-	public int getTreeLevel(){
+
+	public int getTreeLevel() {
 		return treeLevel;
 	}
-	
+
 	@Override
 	public boolean equals(Object that) {
-		 if (!(that instanceof Node)) {
-			 return false;
-		 }
-		 Node node = (Node) that;
-		 return (this.state == node.state) && (this.treeLevel == node.treeLevel); //Is this really a good way to check equality ?
+		if (!(that instanceof Node)) {
+			return false;
+		}
+		Node node = (Node) that;
+		return (this.state == node.state) && (this.treeLevel == node.treeLevel); // Is this really a good way to check
+																					// equality ?
 	}
 }
