@@ -94,8 +94,11 @@ public class Tree {
 			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
 
 			if (!parentCarriedTasks.isEmpty()) {
-				if (!path.isEmpty()) { //if there are cities in between here and current pickup point
-					for (City pathCity : path) { //see if there's a dropoff city in the way
+				if (!path.isEmpty()) { // if there are cities in between here
+										// and current pickup point
+					boolean nodeCreatedForTask = false;
+					for (City pathCity : path) { // see if there's a dropoff
+													// city in the way
 
 						// start by checking the closest cities then work
 						// outwards
@@ -105,51 +108,63 @@ public class Tree {
 							// only
 							// one node is created for it
 							boolean check = childCarriedTasks
-									.removeAll(tasksPerCity.get(deliveryCities.indexOf(pathCity))); //if check is ever false, there's a problem					
-							
-							if(!check){
+									.removeAll(tasksPerCity.get(deliveryCities.indexOf(pathCity)));
+							/* if check is ever false, there's a problem */
+
+							if (!check) {
 								System.out.println("PROBLEM");
 							}
-							
-							State childState = new State(currentCity, childTasksToPickUp, childCarriedTasks);
+
+							State childState = new State(pathCity, childTasksToPickUp, childCarriedTasks);
 							Node childNode = new Node(parentNode, childState, currentLevel);
 							children.add(childNode);
 
 							parentCarriedTasksClone.removeAll(tasksPerCity.get(deliveryCities.indexOf(pathCity)));
-							deliveryCities.set(deliveryCities.indexOf(pathCity),null);		
-							
+							deliveryCities.set(deliveryCities.indexOf(pathCity), null);
+
+							nodeCreatedForTask = true;
+
 							break;
-
-						} else {
-							// nominal behavior here
-							// ONLY the child Nodes who carriedWeight DOES NOT
-							// exceed the capacity are added
-							childTasksToPickUp.remove(parentTaskToPickUp);
-							childCarriedTasks.add(parentTaskToPickUp);
-
-							State childState = new State(currentCity, childTasksToPickUp, childCarriedTasks);
-							Node childNode = new Node(parentNode, childState, currentLevel);
-
-							if (childNode.getCarriedWeight() <= capacity) {
-								children.add(childNode);
-							}
 						}
 					}
-				} else{ //if path is empty (e.g. pickup task in current city)
+					if (!nodeCreatedForTask) { 
+						// in case the check for drop-off cities on route doesn't work out
+						// nominal behavior here
+						// ONLY the child Nodes who carriedWeight DOES NOT
+						// exceed the capacity are added
+						childTasksToPickUp.remove(parentTaskToPickUp);
+						childCarriedTasks.add(parentTaskToPickUp);
+
+						State childState = new State(parentTaskToPickUp.pickupCity, childTasksToPickUp,
+								childCarriedTasks);
+						Node childNode = new Node(parentNode, childState, currentLevel);
+
+						if (childNode.getCarriedWeight() <= capacity) {
+							children.add(childNode);
+						}
+					}
+				} else { // if path is empty (e.g. pickup task in current city)
+					
+					//TODO: Determine if this conditional is worth keeping
 					if (deliveryCities.contains(currentCity)) {
-						// create only delivery Task.
-						// remove delivery Task from parentCarriedTasks so
-						// only
-						// one node is created for it
+						/*
+						 * create only delivery Task.remove delivery Task from
+						 * parentCarriedTasks so only one node is created for it
+						 */
+						
+						//if there are any deliveries meant for the current city that were missed somehow, deal with them here
+						//otherwise this just deals with the node like normal
 						boolean check = childCarriedTasks
-								.removeAll(tasksPerCity.get(deliveryCities.indexOf(currentCity))); //if check is ever false, there's a problem
+								.removeAll(tasksPerCity.get(deliveryCities.indexOf(currentCity)));
+						/*
+						 * if check is ever false, there's a problem
+						 */
 
 						State childState = new State(currentCity, childTasksToPickUp, childCarriedTasks);
 						Node childNode = new Node(parentNode, childState, currentLevel);
 						children.add(childNode);
 
 						parentCarriedTasksClone.removeAll(tasksPerCity.get(deliveryCities.indexOf(currentCity)));
-						break;
 
 					} else {
 						// nominal behavior here
@@ -158,7 +173,8 @@ public class Tree {
 						childTasksToPickUp.remove(parentTaskToPickUp);
 						childCarriedTasks.add(parentTaskToPickUp);
 
-						State childState = new State(currentCity, childTasksToPickUp, childCarriedTasks);
+						State childState = new State(parentTaskToPickUp.pickupCity, childTasksToPickUp,
+								childCarriedTasks);
 						Node childNode = new Node(parentNode, childState, currentLevel);
 
 						if (childNode.getCarriedWeight() <= capacity) {
@@ -167,13 +183,16 @@ public class Tree {
 					}
 				}
 			} else {
-				// nominal behavior here (only applies to root node)
-				// ONLY the child Nodes who carriedWeight DOES NOT exceed the
-				// capacity are added
+				/*
+				 * nominal behavior here (applies when the parent is not
+				 * currently holding any tasks) ONLY the child Nodes who
+				 * carriedWeight DOES NOT exceed the capacity are added
+				 */
+
 				childTasksToPickUp.remove(parentTaskToPickUp);
 				childCarriedTasks.add(parentTaskToPickUp);
 
-				State childState = new State(currentCity, childTasksToPickUp, childCarriedTasks);
+				State childState = new State(parentTaskToPickUp.pickupCity, childTasksToPickUp, childCarriedTasks);
 				Node childNode = new Node(parentNode, childState, currentLevel);
 
 				if (childNode.getCarriedWeight() <= capacity) {
