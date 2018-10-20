@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import logist.task.Task;
@@ -47,8 +48,8 @@ public class Tree {
 						allNodesAtThisLevelAreChildless = false;
 					}
 				}
-				
-				//DEBUG
+
+				// DEBUG
 				System.out.println(currentLevel);
 			}
 		} else {
@@ -106,29 +107,41 @@ public class Tree {
 
 	/*
 	 * Generate ALL the possible DIRECT children Nodes coming from parentNode and
-	 * using the carriedTasks to find them
+	 * using the carriedTasks to find them. Those are the NODES who ONLY consists of
+	 * deliveries
 	 */
 	private ArrayList<Node> generateChildrenIssuedFromDeliveries(Node parentNode, int capacity, int currentLevel) {
-		TaskSet parentTasksToPickUp = parentNode.getState().getTasksToPickUp();
 		HashSet<Task> parentCarriedTasks = parentNode.getState().getCarriedTasks();
+
+		// Each delivery cities, with the tasks that need to be delivered there
+		HashMap<City, ArrayList<Task>> deliveryCities2Tasks = new HashMap<City, ArrayList<Task>>();
+
+		// Initiliaze and populate deliveryCities2Tasks
+		for (Task parentCarriedTask : parentCarriedTasks) {
+			if (deliveryCities2Tasks.containsKey(parentCarriedTask.deliveryCity)) {
+				deliveryCities2Tasks.get(parentCarriedTask.deliveryCity).add(parentCarriedTask);
+			} else {
+				ArrayList<Task> tasks = new ArrayList<Task>();
+				tasks.add(parentCarriedTask);
+				deliveryCities2Tasks.put(parentCarriedTask.deliveryCity, tasks);
+			}
+		}
 
 		ArrayList<Node> children = new ArrayList<Node>();
 
-		for (Task parentCarriedTask : parentCarriedTasks) {
+		for (ArrayList<Task> tasksToDeliver : deliveryCities2Tasks.values()) {
 			// The action that's being made is "go to that task's delivery city
 			// and deliver
 			// the task"
 			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
-			childCarriedTasks.remove(parentCarriedTask);
+			childCarriedTasks.removeAll(tasksToDeliver);
 
-			State childState = new State(parentCarriedTask.deliveryCity, parentTasksToPickUp, childCarriedTasks);
+			State childState = new State(tasksToDeliver.get(0).deliveryCity, 
+					parentNode.getState().getTasksToPickUp(),
+					childCarriedTasks);
+			
+			children.add(new Node(parentNode, childState, currentLevel));
 
-			// ONLY the child Nodes whose carriedWeight DOES NOT exceed the
-			// capacity are added
-			Node childNode = new Node(parentNode, childState, currentLevel);
-			if (childNode.getCarriedWeight() <= capacity) {
-				children.add(new Node(parentNode, childState, currentLevel));
-			}
 		}
 
 		return children;
@@ -187,7 +200,7 @@ public class Tree {
 			return false;
 		}
 	}
-	
+
 	public boolean isGoalNode(Node node) {
 		State state = node.getState();
 		return state.getCarriedTasks().isEmpty() && state.getTasksToPickUp().isEmpty();
