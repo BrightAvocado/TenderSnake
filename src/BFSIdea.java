@@ -37,7 +37,7 @@ public class BFSIdea {
 		Node currentNode = this.tree.getRootNode();
 		Q.add(currentNode);
 		
-		int a = 0;
+		ArrayList<Node> S = new ArrayList<Node>();
 		
 		while (!Q.isEmpty()) {
 			currentNode = Q.get(0);
@@ -45,12 +45,12 @@ public class BFSIdea {
 			if (this.tree.isGoalNode(currentNode)) {// If n is a goal node
 				break;
 			}
-			//C.add(currentNode);
-			ArrayList<Node> S = this.tree.getDirectChildren(currentNode);
-			Q.addAll(S);
-			System.out.println(a + " " + currentNode);
-			a++;
-			
+			S.addAll(this.tree.getDirectChildren(currentNode));
+			if (Q.isEmpty()) {
+				S.sort(new SortByDistanceToRoot());
+				Q.addAll(S);
+				S.clear();
+			}
 		}
 
 		ArrayList<Action> actionsFromRootNodeToEndNode = new ArrayList<Action>();
@@ -67,5 +67,18 @@ public class BFSIdea {
 
 	public Plan getPlan() {
 		return this.plan;
+	}
+	
+	class SortByDistanceToRoot implements Comparator<Node> {
+
+		public int compare(Node a, Node b) {
+			if (b.getDistanceToRoot() > a.getDistanceToRoot()) {
+				return -1;
+			} else if (b.getDistanceToRoot() < a.getDistanceToRoot()) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
 	}
 }
