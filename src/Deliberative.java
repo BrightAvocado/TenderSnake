@@ -78,6 +78,7 @@ public class Deliberative implements DeliberativeBehavior {
 			System.out.println(plan);
 			break;
 		case BFS:
+
 			//tree = new Tree(state,vehicle.capacity(), false);
 			
 			//DEBUG
@@ -96,6 +97,7 @@ public class Deliberative implements DeliberativeBehavior {
 			bfs.computePlan();
 			plan = bfs.getPlan();
 			System.out.println(plan);
+
 			break;
 		default:
 			throw new AssertionError("Should not happen.");
