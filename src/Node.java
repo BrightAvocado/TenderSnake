@@ -22,7 +22,8 @@ public class Node {
 
 		if (this.parent != null) {// If the Node is NOT the rootNode
 
-			// Find the ONE task that has been ADDED (picked up) between this Node and its
+			// Find the ONE task that has been ADDED (picked up) between this
+			// Node and its
 			// parent, IF
 			// there is one
 			Task addedTask = null;
@@ -33,7 +34,8 @@ public class Node {
 				}
 			}
 
-			// Find ALL the tasks that have been REMOVED (delivered) between this Node and
+			// Find ALL the tasks that have been REMOVED (delivered) between
+			// this Node and
 			// its parent, IF
 			// there are some
 			ArrayList<Task> removedTasks = new ArrayList<Task>();
@@ -60,43 +62,30 @@ public class Node {
 
 			// Compute the actionsToGetToThisNode of this Node
 			/*
-			 * Between this Node and its parent, EITHER ONE Task has been added (pick up)
-			 * and NONE has been removed (delivered) OR ONE Task has been added (pick up)
-			 * and some have been removed (delivered) OR NO Task has been added (pick up)
-			 * and some have been removed (delivered) It HAS to be one of those three
+			 * Between this Node and its parent, EITHER ONE Task has been added
+			 * (pick up) and NONE has been removed (delivered) OR ONE Task has
+			 * been added (pick up) and some have been removed (delivered) OR NO
+			 * Task has been added (pick up) and some have been removed
+			 * (delivered) It HAS to be one of those three
 			 */
+			
 			ArrayList<Action> actionsToGetToThisNode = new ArrayList<Action>();
-			if (addedTask != null) { // Pickup
-
-				// Go where the task to pick up needs to be picked up
-				City parentCity = this.parent.state.getCurrentCity();
+			City parentCity = this.parent.state.getCurrentCity();
+			
+			if(!removedTasks.isEmpty()){
+				//either deliver tasks on your way to the pickup city
+					actionsToGetToThisNode.addAll(getDeliveryActions(parentCity, this.state.getCurrentCity(), removedTasks));
+			} else{
+				//or go direct to the pickup city
 				for (City city : parentCity.pathTo(addedTask.pickupCity)) {
 					actionsToGetToThisNode.add(new Move(city));
 				}
-
-				// Deliver all the tasks that can be delivered
-				for (Task removedTask : removedTasks) {
-					if (removedTask.deliveryCity == addedTask.pickupCity) {
-						actionsToGetToThisNode.add(new Delivery(removedTask));
-					}
-				}
-
-				// Pick up the task
-				actionsToGetToThisNode.add(new Pickup(addedTask));
-
-			} else if (!removedTasks.isEmpty()) { // Delivery
-				// Go where the task to deliver needs to be delivered
-				City parentCity = this.parent.state.getCurrentCity();
-				// It is assumed that all the removedTasks have the same delivery city
-				for (City city : parentCity.pathTo(removedTasks.get(0).deliveryCity)) {
-					actionsToGetToThisNode.add(new Move(city));
-				}
-
-				// Deliver ALL the tasks
-				for (Task removedTask : removedTasks) {
-					actionsToGetToThisNode.add(new Delivery(removedTask));
-				}
 			}
+
+			if (addedTask != null) { // Pickup
+				actionsToGetToThisNode.add(new Pickup(addedTask));
+			} 
+			
 			this.actionsToGetToThisNode = actionsToGetToThisNode;
 
 		} else {
@@ -104,6 +93,32 @@ public class Node {
 			this.distanceToRoot = 0;
 			this.actionsToGetToThisNode = new ArrayList<Action>();
 		}
+	}
+
+	private ArrayList<Action> getDeliveryActions(City origin, City destination, ArrayList<Task> removedTasks) {
+
+		ArrayList<Action> actions = new ArrayList<Action>();
+		ArrayList<City> pathCities = (ArrayList<City>) origin.pathTo(destination);
+		
+		for (City pathCity : pathCities) {
+			boolean moved = false;
+			for (Task removedTask : removedTasks) {
+				
+				if(!pathCities.contains(removedTask.deliveryCity)) //for debugging
+				{
+					System.out.println("Problem with task "+removedTask.id+", delivery from: "+origin.toString()+" to: "+destination.toString());
+				}
+				if (!moved){
+					actions.add(new Move(pathCity));
+				}
+				moved = true;
+				if (removedTask.deliveryCity == pathCity) {
+					actions.add(new Delivery(removedTask));
+				}
+			}
+		}
+
+		return actions;
 	}
 
 	public Node getParent() {
@@ -136,7 +151,15 @@ public class Node {
 			return false;
 		}
 		Node node = (Node) that;
-		return (this.state == node.state) && (this.treeLevel == node.treeLevel); // Is this really a good way to check
-																					// equality ?
+		return (this.state == node.state) && (this.treeLevel == node.treeLevel); // Is
+																					// this
+																					// really
+																					// a
+																					// good
+																					// way
+																					// to
+																					// check
+																					// equality
+																					// ?
 	}
 }

@@ -55,55 +55,64 @@ public class Deliberative implements DeliberativeBehavior {
 	public Plan plan(Vehicle vehicle, TaskSet tasks) {
 		Plan plan;
 
-		//generate tree
+		// generate tree
 		City currentCity = vehicle.getCurrentCity();
-		
-		//This is super ugly TODO make it pretty
+
+		// This is super ugly TODO make it pretty
 		ArrayList<Task> a = new ArrayList<Task>();
 		for (Object task : vehicle.getCurrentTasks().toArray()) {
 			a.add((Task) task);
 		}
 		HashSet<Task> carriedTasks = new HashSet<Task>();
 		carriedTasks.addAll(a);
-		State state = new State(currentCity,tasks,carriedTasks);
+		State state = new State(currentCity, tasks, carriedTasks);
 		Tree tree = null;
-		
+
 		// Compute the plan with the selected algorithm.
 		switch (algorithm) {
 		case ASTAR:
-			tree = new Tree(state,vehicle.capacity(), false);
+			tree = new Tree(state, vehicle.capacity(), false);
 			AstarPlan astar = new AstarPlanWithUnderestimatingHeuristic(tree);
 			astar.computePlan();
 			plan = astar.getPlan();
 			System.out.println(plan);
 			break;
 		case BFS:
+			// <<<<<<< HEAD
+			boolean arthur = false;
 
-			//tree = new Tree(state,vehicle.capacity(), false);
-			
-			//DEBUG
-			int i = 0;
-			tree = new Tree(state,vehicle.capacity(), true);
-			for (ArrayList<Node> nodes : tree.getNodes()) {
-				for (Node node : nodes) {
-					i++;
+			if (arthur) {
+				// tree = new Tree(state,vehicle.capacity(), false);
+
+				// DEBUG
+				int i = 0;
+				tree = new Tree(state, vehicle.capacity(), true);
+				for (ArrayList<Node> nodes : tree.getNodes()) {
+					for (Node node : nodes) {
+						i++;
+					}
 				}
-			}
-			System.out.println("We have " + i + " nodes.");
-			//!DEBUG
-			
-			
-			BFSIdea bfs = new BFSIdea(tree);
-			bfs.computePlan();
-			plan = bfs.getPlan();
-			System.out.println(plan);
+				System.out.println("We have " + i + " nodes.");
+				// !DEBUG
 
+				BFSIdea bfs = new BFSIdea(tree);
+				bfs.computePlan();
+				plan = bfs.getPlan();
+				System.out.println(plan);
+			}
+			// =======
+			else {
+				tree = new Tree(state, vehicle.capacity(), false);
+				plan = bfsPlan(tree);
+			}
+
+			// >>>>>>> BFS_Optimization_Alg2
 			break;
 		default:
 			throw new AssertionError("Should not happen.");
-		}		
-		
-		//TESTS ARE BEING MADE HERE. SERIOUS STUFF
+		}
+
+		// TESTS ARE BEING MADE HERE. SERIOUS STUFF
 		State currentState = new State(vehicle.getCurrentCity(), tasks, new HashSet<Task>());
 		System.out.println(currentState.getTasksToPickUp());
 		return plan;
@@ -132,14 +141,14 @@ public class Deliberative implements DeliberativeBehavior {
 		return plan;
 	}
 
-	private Plan bfsPlan(Tree _tree){
+	private Plan bfsPlan(Tree _tree) {
 		Plan plan = null;
 		BreadthFirstSearch bfs = new BreadthFirstSearch(_tree);
 		boolean planFound = bfs.determineMasterPlan();
-		if(planFound){
+		if (planFound) {
 			plan = bfs.getBestPlan();
 		}
-			
+
 		return plan;
 	}
 

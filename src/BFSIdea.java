@@ -31,7 +31,7 @@ public class BFSIdea {
 		 */
 		//HashSet<Node> C = new HashSet<Node>(); //TODO change it to HashSet<Node> (or state ?)
 
-		// BFS algo
+		// BFS algorithm
 
 		// We start at the root node
 		Node currentNode = this.tree.getRootNode();

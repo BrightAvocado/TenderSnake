@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import logist.plan.Action;
 import logist.plan.Plan;
 
@@ -11,7 +10,7 @@ public class BreadthFirstSearch {
 	private Tree tree;
 	
 	/*
-	Create New BFS Object
+	Create New BFS Objects
 	Inputs are vehicle and tree
 	Assumptions include that the tree only contains valid actions/states
 	*/
@@ -45,6 +44,13 @@ public class BreadthFirstSearch {
 			solutionFound = true;
 			bestPlan = createNodePlan(bestNode);
 		}
+		
+		//for debugging
+		int count = 0;
+		for (int i = 0; i< tree.getNodes().size(); i++){
+			count += tree.getNodes().get(i).size();
+		}
+		System.out.println("We have " + count + " nodes.");
 		return solutionFound;
 	}
 	
@@ -61,7 +67,7 @@ public class BreadthFirstSearch {
 				//killNodeChildren(node);
 				killNode(level,i);
 			}
-			else if (tree.isChildless(node)){
+			else if (tree.isGoalNode(node)){
 				//if node is better than current best AND has no children, node becomes new best node
 				bestDistance = node.getDistanceToRoot();
 				bestNode = node;
