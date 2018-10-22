@@ -32,7 +32,17 @@ The goal state for the agent is to have no remaining tasks to pick-up or deliver
 
 \subsection{Actions}
 % Describe the possible actions/transitions in your model %
-At any given state, an agent is given N+M possible transitions, where N represents that number tasks available for pick-up and M represents the number of tasks currently being carried which can be dropped-off. Each of these possible actions will cause the agent to transition to the city of the respective pick-up or drop-off task. 
+At any given state, an agent is given up to N+M possible transitions, where N represents that number tasks available for pick-up and M represents the number of tasks currently being carried which can be dropped-off. Each of these possible actions will cause the agent to transition to the city of the respective pick-up or drop-off task.\\
+
+In order to reduce the amount of nodes, a given node can transition into three different kinds of new nodes : 
+
+\begin{compactenum}
+	\item a node where the vehicle has picked up a task in a City A and delivered a non-zero amount of tasks in that same City A;
+	\item a node where the vehicle has picked up a task in a City A and delivered no task in the City A;
+	\item a node where the vehicle has picked up no task and delivered a non-zero amount of tasks to a City A.\\
+\end{compactenum}
+
+On top of these improvements, if the vehicle \textit{has to} pass over a city where it can deliver a task, it does automatically.
 
 \section{Implementation}
 Prior to implementing either search algorithm, a \texttt{Tree} class was created, which established the functions and data structures required to create a tree of \texttt{Node} states. The \texttt{Tree} can be initialized differently, to either generate and store the whole tree immediately or to generate the tree incrementally, depending on the search algorithm being implemented. The \texttt{Tree} class also has functions to remove nodes, return all nodes at a given level, check the goal condition for a node, and to generate children for a node. 
