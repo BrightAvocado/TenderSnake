@@ -59,7 +59,7 @@ public class Tree {
 	 * Generate ALL the possible DIRECT children Nodes coming from parentNode
 	 * and using the carriedTasks and TaskSet of parentNode to find them
 	 */
-	public ArrayList<Node> generateChildren(Node parentNode, int capacity, int currentLevel) {
+	private ArrayList<Node> generateChildren(Node parentNode, int capacity, int currentLevel) {
 
 		ArrayList<Node> children = new ArrayList<Node>();
 		children.addAll(generateChildrenIssuedFromDeliveries(parentNode, currentLevel + 1));
@@ -116,7 +116,7 @@ public class Tree {
 			// Handle the delivery of tasks IF THERE ARE some that needs to be
 			// delivered anywhere on the path to the delivery city
 			for (City pathCity : pathCities) {
-				if (deliveryCities2Tasks.get(pathCity) != null) {
+				if (deliveryCities2Tasks.containsKey(pathCity)) {
 					for (Task parentTaskToDeliverInThePickupCity : deliveryCities2Tasks.get(pathCity)) {
 						childCarriedTasks.remove(parentTaskToDeliverInThePickupCity); 
 					}
