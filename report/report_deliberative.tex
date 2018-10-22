@@ -10,9 +10,15 @@
 \usepackage{graphicx}
 \usepackage{array}
 \usepackage{wrapfig}
-
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage{geometry}
+\usepackage{titling}
+\usepackage{blindtext}
+\setlength{\droptitle}{-4em}     % Eliminate the default vertical space
+\addtolength{\droptitle}{-50pt}   % Only a guess. Use this for adjustment
 % Put your group number and names in the author field %
-\title{\bf Exercise 3\\ Implementing a deliberative Agent}
+\title{\bf Exercise 3: Implementing a deliberative Agent}
 \author{Group \textnumero76: Simon Honigmann, Arthur Gassner}
 
 % N.B.: The report should not be longer than 3 pages %
@@ -24,39 +30,34 @@
 
 \subsection{Intermediate States}
 % Describe the state representation %
-State was represented by the current city of a given agent, a list of all available tasks, and a list of all tasks currently being carried by the agent. A \texttt{State} class was created to conveniently encode this information. \\
-
-In addition to the information included in the vehicle's state, we added some information to the nodes to reduce the complexity of planning algorithms. This information included: the total distance travelled from the root node, the node's parent, the total weight of tasks being carried (which can be computed directly from the list of carried tasks), a list of actions, \textit{actions required}, that the agent needs to take to transition from the parent node, and the tree level on which the node exists. A \texttt{Node} class was created to encapsulate the state and supplemental information. 
+State was represented by the current city of a given agent, a list of all available tasks, and a list of all tasks currently being carried by the agent. A \texttt{State} class was created to conveniently encode this information. In addition to the information included in the vehicle's state, we added some information to the nodes to reduce the complexity of planning algorithms. This information included: the total distance travelled from the root node, the node's parent, the total weight of tasks being carried (which can be computed directly from the list of carried tasks), the list of actions, that the agent needs to take to transition from the parent node, and the tree level on which the node exists. A \texttt{Node} class was created to encapsulate the state and supplemental information. 
 \subsection{Goal State}
 % Describe the goal state %
 The goal state for the agent is to have no remaining tasks to pick-up or deliver. This is represented in the tree as reaching a node which has no children nodes. Nodes satisfying this goal state are not unique. The optimality of a node is determined by the magnitude of the distance travelled to reach the node. 
 
 \subsection{Actions}
 % Describe the possible actions/transitions in your model %
-At any given state, an agent is given up to N+M possible transitions, where N represents that number tasks available for pick-up and M represents the number of tasks currently being carried which can be dropped-off. Each of these possible actions will cause the agent to transition to the city of the respective pick-up or drop-off task. Two unique node types were identified : a node where the vehicle has picks up a task in a city, and a node where the vehicle goes directly to a city to drop off a task.To further reduce the number of nodes, the following conditions are checked :
+At any given state, an agent is can have up to N+M possible children, where N represents the number tasks available for pick-up and M represents the number of tasks currently being carried which can be dropped-off. Each of these possible actions will cause the agent to transition to the city of the respective pick-up or drop-off task. Two unique node types were identified : a node where the vehicle has picks up a task in a city, and a node where the vehicle goes directly to a city to drop off (a) task(s).To further reduce the number of nodes, the following conditions are checked :
 
 \begin{compactenum}
-	\item If there is a package to delivery on the target path, the delivery actions are all added to the  node.
+	\item If there are packages to deliver on the target path, all delivery actions are all added to the  node.
 	\item If adding a task exceeds the vehicle's capacity, the node is invalid and is not added to the tree.
-	\item If a goal state has been reached, nodes are rejected if it's distance exceeds the current best. 
 \end{compactenum}
 
 
 \section{Implementation}
-Prior to implementing either search algorithm, a \texttt{Tree} class was created, which established the functions and data structures required to create a tree of \texttt{Node} states. The \texttt{Tree} can be initialized differently, to either generate and store the whole tree immediately or to generate the tree incrementally, depending on the search algorithm being implemented. The \texttt{Tree} class also has functions to remove nodes, return all nodes at a given level, check the goal condition for a node, and to generate children for a node. 
+Prior to implementing either search algorithm, a \texttt{Tree} class was created, which established the functions and data structures required to create a tree of \texttt{Node} states. The \texttt{Tree} can be initialized differently, to either generate and store the whole tree immediately or to generate the tree incrementally, depending on the search algorithm being implemented. The former option is not used in our final optimized versions of BFS and A*. The \texttt{Tree} class also has functions to remove nodes, return all nodes at a given level, check the goal condition for a node, and to generate children for a node. 
 
 \subsection{BFS}
 % Details of the BFS implementation %
-The Breadth First Search (BFS) algorithm determines the absolute optimal pick-up and delivery plan for an agent by searching through all possible paths. To do this, the tree is incrementally generated. Then, starting at the tree's root node and working down level-by-level, each node is evaluated. As nodes are added to the working list of nodes, they are ordered based on their distance from the root. Nodes are evaluated against the goal condition, then removed from the working list. A list of actions required to get to the optimal node is generated by travelling up the tree until the root is found, and storing each node's \textit{actions required} in an ArrayList. Finally, a plan is generated using the agent's starting city and the generated list of actions. This plan is returned and is implemented by the agent. 
+The Breadth First Search (BFS) algorithm determines the optimal pick-up and delivery plan for an agent by searching through all feasible paths. To do this, the tree is incrementally generated, starting with the root. Then, working down level-by-level, each node is evaluated. The algorithm will first check the distance to root parameter for a node and compare it to the current best distance (initialized as \texttt{ double.MAX\char`_VALUE} such that any path reaching the goal state can trump the default value). If the node's distance to root is lower than the current best, the algorithm checks if the node satisfies the goal condition of having no children and updates the best distance and nodes accordingly. If the node has children, a flag is set to continue the search of remaining nodes on the next tree level. On each level the flag is reset. The algorithm continues until no children remain, then returns the best node. A list of actions required to get to the optimal node is generated by travelling up the tree until the root is found, and storing each node's \textit{actions required}. Finally, a plan is generated from these actions.
 \subsection{A*}
 % Details of the A* implementation %
 The A* algorithm is used along a heuristic that estimates the distance between the current node and a goal node. It goes deeper into the tree by trying first the nodes who, according to the heuristic, are closer to a goal node. Once a goal node is found, the implementation of A* has been made so that it computes the actions necessary to go from the root node to this goal node, and creates a Plan object out of this list of actions. When it comes to the implementation of A*, we made the \texttt{abstract class AstarPlan}, with the method \texttt{abstract double h(Node node)} representing the heuristic. For each A* algorithm (using each a different heuristics), we make a class that inherits from\textsl{} the class AstarPlan and then implement the heuristic. 
 
 \subsection{Heuristic Function}
 % Details of the heuristic functions: main idea, optimality, admissibility %
-We tried two heuristic functions, represented by the classes \texttt{AstarPlanWithZeroHeuristic} and \texttt{AstarPlanWithMinDistanceHeuristic}.\\
-
-The class \texttt{AstarPlanWithZeroHeuristic} has a heuristic always returning zero, clearly underestimating the distance from the current node to a goal node. In that sense, the heuristic is \textit{admissible}. The admissibility of the heuristics leads A* to always finding the optimal solution. Therefore, this heuristic is \textit{optimal}. It is however important to note that this heuristic is very inefficient, with a large execution time (10.5 seconds for 6 tasks in Switzerland).\\
+We tried two heuristic functions, represented by the classes \texttt{AstarPlanWithZeroHeuristic} (A* ZH) and \texttt{AstarPlanWithMinDistanceHeuristic} (A* MD). The class \texttt{AstarPlanWithZeroHeuristic} has a heuristic always returning zero, clearly underestimating the distance from the current node to a goal node. In that sense, the heuristic is \textit{admissible}. The admissibility of the heuristics leads A* to always finding the optimal solution. Therefore, this heuristic is \textit{optimal}. It is however important to note that this heuristic is very inefficient, with a large execution time (10.5 seconds for 6 tasks in Switzerland).\\
 
 The class \texttt{AstarPlanWithMinDistanceHeuristic} is the second A* algorithm implemented. Its heuristic considers the minimum amount of distance it had to travel to get to its first task at the beginning. Then, it considers that to deliver each task the vehicle is currently carrying, it has to travel that same distance. It also considers that to pick-up and deliver each task it has not picked up yet, it has to travel twice that same distance. The heuristic then returns the "expected distance to travel" varying with the number of carried tasks and the number of tasks left to pick up. This heuristic is not \textit{admissible} since it does not underestimate the distance to a goal node. Therefore, it leads A* to not always finding the optimal solution (This heuristic is hereby not \textit{optimal}). It is however important to note that this heuristic finds a solution much faster than the previous admissible heuristic (0.5 second for 6 tasks in Switzerland).
 
@@ -73,10 +74,10 @@ Our BFS algorithm was compared against both A* search algorithms using for singl
 % Describe the experimental results and the conclusions you inferred from these results %
 
 \begin{wraptable}{r}{9cm}
-		\caption{Comparison of Algorithm Performance for the Delivery of 6 Tasks, Starting from Lausanne}
+		\caption{Comparison of BFS, A* ZH, and A* MD Algorithm Performance for the Delivery of 6 Tasks, Starting from Lausanne}
 	\begin{tabular}{|c|c|c|c|}
 		\hline
-		Seed & Algorithm & Distance (km) & \begin{tabular}[c]{@{}c@{}}Computation \\ Time (s)\end{tabular} \\ \hline
+		Seed & Algorithm & \begin{tabular}[c]{@{}c@{}}Distance \\Travelled (km) \end{tabular} & \begin{tabular}[c]{@{}c@{}}Computation \\ Time (s)\end{tabular} \\ \hline
 		\multirow{3}{*}{23456} & BFS & 1380 & 8.7 \\ \cline{2-4} 
 		& A* ZH & 1380 & 10.7 \\ \cline{2-4} 
 		& A* MD & 1460 & 0.7 \\ \hline
@@ -89,22 +90,22 @@ Our BFS algorithm was compared against both A* search algorithms using for singl
 	\end{tabular}
 \end{wraptable}
 
-As is apparent in the above table, the Zero Heuristic algorithm ends up being the slowest due to the poor choice of heuristic, and potentially the increased optimization efforts for BFS, trying to manage 8 tasks. Both BFS and A* with the Zero Heuristic return the same, optimal path. 
+The Zero Heuristic algorithm ends up being the slowest due to the poor choice of heuristic, and potentially the increased optimization efforts for BFS. Both BFS and A* with the Zero Heuristic return the same, optimal path. 
 
-A* with the Minimum Distance heuristic performed formidably as well. While it's decisions were not always optimal, it's selected plans were within 4\% of the distance travelled of the optimal solution with a considerable 20x decrease in computation speed compared to BFS. A* with the Minimum Distance heuristic also trumped the other algorithms in its capacity to handle tasks. In under 1 minute, BFS could handle 6 tasks reliably, A* with Zero heuristic could handle 10 tasks, and A* with Minimum Distance heuristic could handle about 53 tasks. 
+A* with the Minimum Distance heuristic performed excellently. While not always optimal, its plans were within 4\% of the distance travelled of the optimal solution with a considerable 20x decrease in computation speed compared to BFS. A* with the Minimum Distance heuristic also trumped the other algorithms in its capacity to handle tasks. In under 1 minute, BFS could handle 6 tasks reliably, A* with Zero heuristic could handle 10 tasks, and A* with Minimum Distance heuristic could handle about 53 tasks. 
 
 \subsection{Experiment 2: Multi-agent Experiments}
 % Observations in multi-agent experiments %
 
 \subsubsection{Setting}
 % Describe the settings of your experiment: topology, task configuration, etc. %
-This experiment is run using configuration as specified in the \texttt{deliberativeE2.xml} file. It is run three times : with 1 BFS vehicle, 2 BFS vehicle and 3 BFS vehicle.
+This experiment is run using configuration as specified in the \texttt{deliberativeE2.xml} file. It is run three times : with 1 vehicle, 2 vehicles and 3 vehicles, for both BFS and A* MD.
 \subsubsection{Observations}
 % Describe the experimental results and the conclusions you inferred from these results %
-As we can see in Tables 2 and 3, despite doubling (respectively tripling) the amount of vehicles in the country, the time it takes for the tasks to all be delivered decreases only slightly. This decrease has a huge cost, since the two (respectively three) cars' total distance traveled increases much faster. This is due to the car not cooperating. If they were able to coordinate themselves, the total distance traveled would decreased as well as the time to deliver all tasks.\\
+As we can see in Tables 2, despite doubling (respectively tripling) the amount of vehicles in the country, the time it takes for the tasks to all be delivered decreases only slightly. This decrease has a huge cost, since the two (respectively three) cars' total distance traveled increases much faster. This is due to the car not cooperating. If they were able to coordinate themselves, the total distance traveled would decreased as well as the time to deliver all tasks.\\
 
 \begin{table}[h]
-		\caption{Table comparing the results of one, two and three BFS agents running in parallel in Switzerland with 6 tasks}
+		\caption{Table comparing the results of one, two and three BFS and A* (Minimum Distance Heuristic) agents running in parallel in Switzerland with 6 tasks}
 	\begin{tabular}{|c|c|c|
 			>{\columncolor[HTML]{EFEFEF}}c |
 			>{\columncolor[HTML]{EFEFEF}}c |
