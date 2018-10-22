@@ -7,11 +7,11 @@ import java.util.HashSet;
 import logist.plan.Action;
 import logist.plan.Plan;
 
-public class BFSIdea {
+public class BFS {
 	protected Tree tree;
 	private Plan plan;
 
-	public BFSIdea(Tree tree) {
+	public BFS(Tree tree) {
 		this.tree = tree;
 		this.plan = null;
 	}

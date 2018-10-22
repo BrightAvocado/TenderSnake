@@ -8,7 +8,7 @@ import logist.task.TaskSet;
 import logist.topology.Topology.City;
 
 public class Tree {
-	// Nodes that constitute the tree. It can be uncomputed, and therefore null
+	// Nodes that constitute the tree. It can be uninitialized, and therefore null
 	private ArrayList<ArrayList<Node>> nodes;
 	private final Node rootNode;
 	private final int capacity;
@@ -40,7 +40,7 @@ public class Tree {
 				this.nodes.add(nodesAtNextLevel);
 				currentLevel++;
 
-				// Find out if ALL the child at this level are childless
+				// Find out if ALL the child at this level are child-less
 				allNodesAtThisLevelAreChildless = true;
 				for (int i = 0; i < this.getNodesAtLevel(currentLevel).size() && allNodesAtThisLevelAreChildless; i++) {
 					Node node = this.getNodesAtLevel(currentLevel).get(i);
@@ -102,6 +102,7 @@ public class Tree {
 			// to
 			// carriedTasks
 			TaskSet childTasksToPickUp = parentTasksToPickUp.clone();
+			@SuppressWarnings("unchecked")
 			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
 
 			/*
@@ -111,16 +112,13 @@ public class Tree {
 			ArrayList<City> pathCities = (ArrayList<City>) parentNode.getState().getCurrentCity()
 					.pathTo(parentTaskToPickUp.pickupCity);
 			
-			//add current city just in case a drop off was missed somehow? i dunno...
-			//pathCities.add(0,parentNode.getState().getCurrentCity()); 
 			
 			// Handle the delivery of tasks IF THERE ARE some that needs to be
 			// delivered anywhere on the path to the delivery city
 			for (City pathCity : pathCities) {
 				if (deliveryCities2Tasks.get(pathCity) != null) {
 					for (Task parentTaskToDeliverInThePickupCity : deliveryCities2Tasks.get(pathCity)) {
-						childCarriedTasks.remove(parentTaskToDeliverInThePickupCity); //TODO:check this line for bugs
-						//deliveryCities2Tasks.get(pathCity).remove(parentTaskToDeliverInThePickupCity); //don't think this does anything
+						childCarriedTasks.remove(parentTaskToDeliverInThePickupCity); 
 					}
 				}
 			}
@@ -166,9 +164,10 @@ public class Tree {
 		ArrayList<Node> children = new ArrayList<Node>();
 
 		for (ArrayList<Task> tasksToDeliver : deliveryCities2Tasks.values()) {
-			// The action that's being made is "go to that task's delivery city
-			// and deliver
-			// the task"
+			/* 
+			 * The action that's being made is "go to that task's delivery city and deliver the task"
+			 */
+			@SuppressWarnings("unchecked")
 			HashSet<Task> childCarriedTasks = (HashSet<Task>) parentCarriedTasks.clone();
 			childCarriedTasks.removeAll(tasksToDeliver);
 
@@ -186,7 +185,6 @@ public class Tree {
 
 	/**
 	 * The root node is the node from which all the other nodes come from
-	 * 
 	 * @return the root node of this tree.
 	 */
 	public Node getRootNode() {
