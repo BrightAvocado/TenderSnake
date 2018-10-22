@@ -22,10 +22,10 @@ public class Node {
 
 		if (this.parent != null) {// If the Node is NOT the rootNode
 
-			// Find the ONE task that has been ADDED (picked up) between this
-			// Node and its
-			// parent, IF
-			// there is one
+			/*
+			 * Find the ONE task that has been ADDED (picked up) between this
+			 * Node and its parent, IF there is one
+			 */
 			Task addedTask = null;
 			for (Task task : this.state.getCarriedTasks()) {
 				if (!this.parent.state.getCarriedTasks().contains(task)) {
@@ -34,10 +34,10 @@ public class Node {
 				}
 			}
 
-			// Find ALL the tasks that have been REMOVED (delivered) between
-			// this Node and
-			// its parent, IF
-			// there are some
+			/*
+			 * Find ALL the tasks that have been REMOVED (delivered) between //
+			 * this Node and // its parent, IF // there are some
+			 */
 			ArrayList<Task> removedTasks = new ArrayList<Task>();
 			for (Task parentTask : this.parent.state.getCarriedTasks()) {
 				if (!this.state.getCarriedTasks().contains(parentTask)) {
@@ -68,15 +68,16 @@ public class Node {
 			 * Task has been added (pick up) and some have been removed
 			 * (delivered) It HAS to be one of those three
 			 */
-			
+
 			ArrayList<Action> actionsToGetToThisNode = new ArrayList<Action>();
 			City parentCity = this.parent.state.getCurrentCity();
-			
-			if(!removedTasks.isEmpty()){
-				//either deliver tasks on your way to the pickup city
-					actionsToGetToThisNode.addAll(getDeliveryActions(parentCity, this.state.getCurrentCity(), removedTasks));
-			} else{
-				//or go direct to the pickup city
+
+			if (!removedTasks.isEmpty()) {
+				// either deliver tasks on your way to the pickup city
+				actionsToGetToThisNode
+						.addAll(getDeliveryActions(parentCity, this.state.getCurrentCity(), removedTasks));
+			} else {
+				// or go direct to the pickup city
 				for (City city : parentCity.pathTo(addedTask.pickupCity)) {
 					actionsToGetToThisNode.add(new Move(city));
 				}
@@ -84,8 +85,8 @@ public class Node {
 
 			if (addedTask != null) { // Pickup
 				actionsToGetToThisNode.add(new Pickup(addedTask));
-			} 
-			
+			}
+
 			this.actionsToGetToThisNode = actionsToGetToThisNode;
 
 		} else {
@@ -99,16 +100,11 @@ public class Node {
 
 		ArrayList<Action> actions = new ArrayList<Action>();
 		ArrayList<City> pathCities = (ArrayList<City>) origin.pathTo(destination);
-		
+
 		for (City pathCity : pathCities) {
 			boolean moved = false;
 			for (Task removedTask : removedTasks) {
-				
-				if(!pathCities.contains(removedTask.deliveryCity)) //for debugging
-				{
-					System.out.println("Problem with task "+removedTask.id+", delivery from: "+origin.toString()+" to: "+destination.toString());
-				}
-				if (!moved){
+				if (!moved) {
 					actions.add(new Move(pathCity));
 				}
 				moved = true;
@@ -151,15 +147,6 @@ public class Node {
 			return false;
 		}
 		Node node = (Node) that;
-		return (this.state == node.state) && (this.treeLevel == node.treeLevel); // Is
-																					// this
-																					// really
-																					// a
-																					// good
-																					// way
-																					// to
-																					// check
-																					// equality
-																					// ?
+		return (this.state == node.state) && (this.treeLevel == node.treeLevel);
 	}
 }
