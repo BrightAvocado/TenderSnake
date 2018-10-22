@@ -4,7 +4,7 @@ import logist.plan.Plan;
 
 public class BreadthFirstSearch {
 
-	private static double bestDistance = Double.MAX_VALUE; //initialize bestDistance as the max possible distance such that any successful path trumps it.
+	private double bestDistance = Double.MAX_VALUE; //initialize bestDistance as the max possible distance such that any successful path trumps it.
 	private Node bestNode=null;
 	private Plan bestPlan; 
 	private Tree tree;
@@ -96,8 +96,8 @@ public class BreadthFirstSearch {
 		return plan;
 	}
 	
-	private void killNode(int index, int level){		
-		tree.removeNode(level, index);
+	private void killNode(int level, int index){		
+		tree.removeNode(index, level);
 	}
 	
 	public Plan getBestPlan(){

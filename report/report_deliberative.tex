@@ -72,28 +72,31 @@ Each search algorithms was thoroughly tested to ensure its robustness and optima
 \subsection{Experiment 1: BFS and A* Comparison}
 % Compare the two algorithms in terms of: optimality, efficiency, limitations %
 % Report the number of tasks for which you can build a plan in less than one minute %
-Our BFS algorithm was compared against both A* search algorithms using the Swiss topology and different random seeds. 
+Our BFS algorithm was compared against both A* search algorithms using for single agents operating in the Swiss topology and different random seeds. All agents start in Lausanne. 
 
-% Please add the following required packages to your document preamble:
-% \usepackage{multirow}
 \begin{table}[]
 	\begin{tabular}{|c|c|c|c|}
 		\hline
-		Algorithm & Seed & \begin{tabular}[c]{@{}c@{}}Max Tasks Under 1 min \\ (Computation Time, s)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Distance Traveled \\ for 6 Tasks, km\end{tabular} \\ \hline
-		\multirow{4}{*}{BFS} & 23456 & 6 ($\sim$1.7) & 1380 \\ \cline{2-4} 
-		& 23457 &  &  \\ \cline{2-4} 
-		& 23458 &  &  \\ \cline{2-4} 
-		& Average &  &  \\ \hline
-		\multirow{4}{*}{A* Zero Heuristic} & 23456 & 10 (10) & 1380 \\ \cline{2-4} 
-		& 23457 &  &  \\ \cline{2-4} 
-		& 23458 &  &  \\ \cline{2-4} 
-		& Average &  &  \\ \hline
-		\multirow{4}{*}{\begin{tabular}[c]{@{}c@{}}A* Min Distance \\ Heuristic\end{tabular}} & 23456 & 53 (2.5) & 1460 \\ \cline{2-4} 
-		& 23457 &  &  \\ \cline{2-4} 
-		& 23458 &  &  \\ \cline{2-4} 
-		& Average &  &  \\ \hline
+		Seed & Algorithm & Distance Travelled  for 6 Tasks (km) & Computation Time for 6 Tasks (s) \\ \hline
+		\multirow{3}{*}{23456} & BFS & 1380 & 8.7 \\ \cline{2-4} 
+		& A* Zero Heuristic & 1380 & 10.7 \\ \cline{2-4} 
+		& A* Minimum Distance & 1460 & 0.7 \\ \hline
+		\multirow{3}{*}{23457} & BFS & 1510 & 10.7 \\ \cline{2-4} 
+		& A* Zero Heuristic & 1510 & 63 \\ \cline{2-4} 
+		& A* Minimum Distance & 1590 & 0.5 \\ \hline
+		\multirow{3}{*}{23458} & BFS & 910 & 15.5 \\ \cline{2-4} 
+		& A* Zero Heuristic & 910 & 16 \\ \cline{2-4} 
+		& A* Minimum Distance & 910 & 0.5 \\ \hline
+		\multirow{3}{*}{Average} & BFS & 1266.7 & 11.6 \\ \cline{2-4} 
+		& A* Zero Heuristic & 1266.7 & 29.9 \\ \cline{2-4} 
+		& A* Minimum Distance & 1320.0 & 0.6 \\ \hline
 	\end{tabular}
 \end{table}
+
+As is apparent in the above table, the Zero Heuristic algorithm ends up being the slowest due to the poor choice of heuristic, and potentially the increased optimization efforts for BFS, trying to manage 8 tasks. Both BFS and A* with the Zero Heuristic return the same, optimal path. 
+
+A* with the Minimum Distance heuristic performed formidably as well. While it's decisions were not always optimal, it's selected plans were within 4\% of the distance travelled of the optimal solution with a considerable 20x decrease in computation speed compared to BFS. A* with the Minimum Distance heuristic also trumped the other algorithms in its capacity to handle tasks. In under 1 minute, BFS could handle 6 tasks reliably, A* with Zero heuristic could handle 10 tasks, and A* with Minimum Distance heuristic could handle about 53 tasks. 
+
 \subsubsection{Setting}
 % Describe the settings of your experiment: topology, task configuration, etc. %
 
