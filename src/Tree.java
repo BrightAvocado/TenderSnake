@@ -59,7 +59,7 @@ public class Tree {
 	 * Generate ALL the possible DIRECT children Nodes coming from parentNode
 	 * and using the carriedTasks and TaskSet of parentNode to find them
 	 */
-	private ArrayList<Node> generateChildren(Node parentNode, int capacity, int currentLevel) {
+	public ArrayList<Node> generateChildren(Node parentNode, int capacity, int currentLevel) {
 
 		ArrayList<Node> children = new ArrayList<Node>();
 		children.addAll(generateChildrenIssuedFromDeliveries(parentNode, currentLevel + 1));

@@ -56,12 +56,15 @@ public class Deliberative implements DeliberativeBehavior {
 		Plan plan;
 		City currentCity = vehicle.getCurrentCity();
 
-		TaskSet currentTasks = vehicle.getCurrentTasks(); //current tasks to pickup
-		HashSet<Task> carriedTasks = new HashSet<Task>(); //convert to HashSet for state initialization
-		for (Task task : currentTasks){
+		TaskSet currentTasks = vehicle.getCurrentTasks(); // current tasks to
+															// pickup
+		HashSet<Task> carriedTasks = new HashSet<Task>(); // convert to HashSet
+															// for state
+															// initialization
+		for (Task task : currentTasks) {
 			carriedTasks.add(task);
 		}
-		
+
 		State state = new State(currentCity, tasks, carriedTasks);
 		Tree tree = null;
 
@@ -74,6 +77,7 @@ public class Deliberative implements DeliberativeBehavior {
 			plan = astar.getPlan();
 			break;
 		case BFS:
+
 			tree = new Tree(state, vehicle.capacity(), false);
 			plan = bfsPlan(tree);
 			break;
@@ -107,11 +111,10 @@ public class Deliberative implements DeliberativeBehavior {
 	}
 
 	private Plan bfsPlan(Tree _tree) {
-		
-		BFS bfs = new BFS(_tree);
-		bfs.computePlan();
-		Plan plan = bfs.getPlan();
-		System.out.println(plan);
+
+		BreadthFirstSearch bfs = new BreadthFirstSearch(_tree);
+		Plan plan = bfs.getBestPlan();
+
 		return plan;
 	}
 
