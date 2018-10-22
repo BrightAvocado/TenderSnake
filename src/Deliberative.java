@@ -79,9 +79,9 @@ public class Deliberative implements DeliberativeBehavior {
 			break;
 		case BFS:
 			// <<<<<<< HEAD
-			boolean arthur = false;
+			boolean preloadTree = false;
 
-			if (arthur) {
+			if (preloadTree) {
 				// tree = new Tree(state,vehicle.capacity(), false);
 
 				// DEBUG
