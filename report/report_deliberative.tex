@@ -1,6 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{multirow}
 \usepackage{paralist}
+\usepackage[table,xcdraw]{xcolor}
 \usepackage{amsmath}
 \usepackage{textcomp}
 \usepackage[top=0.8in, bottom=0.8in, left=0.8in, right=0.8in]{geometry}
@@ -64,15 +65,15 @@ Each search algorithms was thoroughly tested to ensure its robustness and optima
 \subsection{Experiment 1: BFS and A* Comparison}
 % Compare the two algorithms in terms of: optimality, efficiency, limitations %
 % Report the number of tasks for which you can build a plan in less than one minute %
-Our BFS algorithm was compared against both A* search algorithms using for single agents operating in the Swiss topology and different random seeds. All agents start in Lausanne. 
-
 \subsubsection{Setting}
 % Describe the settings of your experiment: topology, task configuration, etc. %
+Our BFS algorithm was compared against both A* search algorithms using for single agents operating in the Swiss topology and different random seeds, listed below. All agents start in Lausanne. All relevant parameters are specified in \texttt{deliberativeE1.xml}. 
 
 \subsubsection{Observations}
 % Describe the experimental results and the conclusions you inferred from these results %
 
 \begin{wraptable}{r}{9cm}
+		\caption{Comparison of Algorithm Performance for the Delivery of 6 Tasks, Starting from Lausanne}
 	\begin{tabular}{|c|c|c|c|}
 		\hline
 		Seed & Algorithm & Distance (km) & \begin{tabular}[c]{@{}c@{}}Computation \\ Time (s)\end{tabular} \\ \hline
@@ -86,7 +87,6 @@ Our BFS algorithm was compared against both A* search algorithms using for singl
 		& A* ZH & 910 & 16 \\ \cline{2-4} 
 		& A* MD & 910 & 0.5 \\ \hline
 	\end{tabular}
-	\caption{Comparison of Algorithm Performance for the Delivery of 6 Tasks, Starting from Lausanne}
 \end{wraptable}
 
 As is apparent in the above table, the Zero Heuristic algorithm ends up being the slowest due to the poor choice of heuristic, and potentially the increased optimization efforts for BFS, trying to manage 8 tasks. Both BFS and A* with the Zero Heuristic return the same, optimal path. 
@@ -98,43 +98,23 @@ A* with the Minimum Distance heuristic performed formidably as well. While it's 
 
 \subsubsection{Setting}
 % Describe the settings of your experiment: topology, task configuration, etc. %
-
+This experiment is run using configuration as specified in the \texttt{deliberativeE2.xml} file. It is run three times : with 1 BFS vehicle, 2 BFS vehicle and 3 BFS vehicle.
 \subsubsection{Observations}
 % Describe the experimental results and the conclusions you inferred from these results %
 As we can see in Tables 2 and 3, despite doubling (respectively tripling) the amount of vehicles in the country, the time it takes for the tasks to all be delivered decreases only slightly. This decrease has a huge cost, since the two (respectively three) cars' total distance traveled increases much faster. This is due to the car not cooperating. If they were able to coordinate themselves, the total distance traveled would decreased as well as the time to deliver all tasks.\\
 
 \begin{table}[h]
-	\centering
-	\begin{tabular}{ | c | c | c | } 
+		\caption{Table comparing the results of one, two and three BFS agents running in parallel in Switzerland with 6 tasks}
+	\begin{tabular}{|c|c|c|
+			>{\columncolor[HTML]{EFEFEF}}c |
+			>{\columncolor[HTML]{EFEFEF}}c |
+			>{\columncolor[HTML]{EFEFEF}}c |}
 		\hline
-		\qquad & time to deliver all tasks [s] & sum of the distances traveled by the vehicles [km]\\
-		\hline
-		BFS & 27.1 & 1380 \\ 
-		\hline
-		BFSx2 & 24.2 & 2410 \\
-		\hline
-		BFSx3 & 23.4 & 3120 \\
-		\hline
+		\begin{tabular}[c]{@{}c@{}}Algorithm \\ (\# Agents)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Total Delivery\\ Time (s)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Total Distance\\ Travelled (km)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Algorithm \\ (\# Agents)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Total Delivery\\ Time (s)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Total Distance\\ Travelled (km)\end{tabular} \\ \hline
+		BFS (1) & 27.1 & 1380 & A* MD (1) & 20 & 1460 \\ \hline
+		BFS (2) & 24.1 & 2410 & A* MD (2) & 16 & 2410 \\ \hline
+		BFS (3) & 23.4 & 3120 & A* MD (3) & 15.4 & 2830 \\ \hline
 	\end{tabular}
-	\caption{Table comparing the results of one, two and three BFS agents running in parallel in Switzerland with 6 tasks}
-	\label{table:2}
-\end{table}
-
-\begin{table}[h]
-	\centering
-	\begin{tabular}{ | c | c | c | } 
-		\hline
-		\qquad & time to deliver all tasks [s] & sum of the distances traveled by the vehicles [km]\\
-		\hline
-		A* & 20 & 1460 \\ 
-		\hline
-		A*x2 & 16 & 2410 \\
-		\hline
-		A*x3 & 15.4 & 2830 \\
-		\hline
-	\end{tabular}
-	\caption{Table comparing the results of one, two and three A* agents (with the heuristics defined by the class \texttt{AstarPlanWithMinDistanceHeuristic}) running in parallel in Switzerland with 6 tasks}
-	\label{table:2}
 \end{table}
 
 \end{document}
