@@ -69,7 +69,7 @@ public class Deliberative implements DeliberativeBehavior {
 		switch (algorithm) {
 		case ASTAR:
 			tree = new Tree(state, vehicle.capacity(), false);
-			AstarPlan astar = new AstarPlanWithMinDistanceHeuristic(tree);
+			AstarPlan astar = new AstarPlanWithZeroHeuristic(tree);
 			astar.computePlan();
 			plan = astar.getPlan();
 			break;

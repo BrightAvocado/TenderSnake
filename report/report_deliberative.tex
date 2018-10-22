@@ -34,16 +34,17 @@ The goal state for the agent is to have no remaining tasks to pick-up or deliver
 % Describe the possible actions/transitions in your model %
 At any given state, an agent is given up to N+M possible transitions, where N represents that number tasks available for pick-up and M represents the number of tasks currently being carried which can be dropped-off. Each of these possible actions will cause the agent to transition to the city of the respective pick-up or drop-off task.\\
 
-Two unique node types were identified : a node where the vehicle has picks up a task in a city, and a node where the vehicle goes directly to a city to drop off a task.To further reduce the number of nodes, the following conditions are checked :
+In order to reduce the amount of nodes, a given node can transition into three different kinds of new nodes : 
 
 \begin{compactenum}
-	\item If the vehicle has a delivery destined for any city along the path from the current city to the target city, the deliveries are all added to the single node.
-	\item If a picking up a task would exceed the vehicle's capacity, the node is invalid and is not added to the tree.
-	\item If a goal state has already been reached, do not create a node if it's distance travelled exceeds the current best. 
+	\item a node where the vehicle has picked up a task in a City A and delivered a non-zero amount of tasks in that same City A;
+	\item a node where the vehicle has picked up a task in a City A and delivered nto task in the City A;                                                                   	\item a node where the vehicle has picked up no task and delivered a non-zero amount of tasks to a City A.\\
 \end{compactenum}
 
+On top of these improvements, if the vehicle \textit{has to} pass over a city where it can deliver a task, it does automatically.
+
 \section{Implementation}
-Prior to implementing either search algorithm, a \texttt{Tree} class was created, which established the functions and data structures required to create a tree of \texttt{Node} states. The \texttt{Tree} can be initialized differently, to either generate and store the whole tree immediately or to generate the tree incrementally, depending on the search algorithm being implemented. The former option is not used in our final optimized versions of BFS and A*. The \texttt{Tree} class also has functions to remove nodes, return all nodes at a given level, check the goal condition for a node, and to generate children for a node. 
+Prior to implementing either search algorithm, a \texttt{Tree} class was created, which established the functions and data structures required to create a tree of \texttt{Node} states. The \texttt{Tree} can be initialized differently, to either generate and store the whole tree immediately or to generate the tree incrementally, depending on the search algorithm being implemented. The \texttt{Tree} class also has functions to remove nodes, return all nodes at a given level, check the goal condition for a node, and to generate children for a node. 
 
 \subsection{BFS}
 % Details of the BFS implementation %
@@ -60,11 +61,11 @@ When it comes to the implementation of A*, we made the \texttt{abstract class As
 
 \subsection{Heuristic Function}
 % Details of the heuristic functions: main idea, optimality, admissibility %
-We tried two heuristic functions, represented by the classes \texttt{AstarPlanWithZeroHeuristic} and \texttt{AstarPlanWithMinDistanceHeuristic} (TODO CHECK CORRECT NAME).\\
+We tried two heuristic functions, represented by the classes \texttt{AstarPlanWithZeroHeuristic} and \texttt{AstarPlanWithMinDistanceHeuristic}.\\
 
-The class \texttt{AstarPlanWithZeroHeuristic} has a heuristic always returning zero, clearly underestimating the distance from the current node to a goal node. In that sense, the heuristic is \textit{admissible}. The admissibility of the heuristics leads A* to always finding the optimal solution. Therefore, this heuristic is \textit{optimal}. It is however important to note that this heuristic is very inefficient, with a large execution time. (TODO: HOW LARGE)\\
+The class \texttt{AstarPlanWithZeroHeuristic} has a heuristic always returning zero, clearly underestimating the distance from the current node to a goal node. In that sense, the heuristic is \textit{admissible}. The admissibility of the heuristics leads A* to always finding the optimal solution. Therefore, this heuristic is \textit{optimal}. It is however important to note that this heuristic is very inefficient, with a large execution time (10.5 seconds for 6 tasks in Switzerland).\\
 
-The class \texttt{AstarPlanWithMinDistanceHeuristic} (TODO CHANGE NAME) is the second A* algorithm implemented. Its heuristic considers the minimum amount of distance it had to travel to get to its first task at the beginning. Then, it considers that to deliver each task the vehicle is currently carrying, it has to travel that same distance. It also considers that to pickup and deliver each task it has not picked up yet, it has to travel twice that same distance. The heuristic then returns the "expected distance to travel" varying with the number of carried tasks and the number of tasks left to pick up. This heuristic is not \textit{admissible} since it does not underestimate the distance to a goal node. Therefore, it leads A* to not always finding the optimal solution (This heuristic is hereby not \textit{optimal}). It is however important to note that this heuristic finds a solution much faster than the previous admissible heuristic. (HOW MUCH QUICKER) 
+The class \texttt{AstarPlanWithMinDistanceHeuristic} is the second A* algorithm implemented. Its heuristic considers the minimum amount of distance it had to travel to get to its first task at the beginning. Then, it considers that to deliver each task the vehicle is currently carrying, it has to travel that same distance. It also considers that to pickup and deliver each task it has not picked up yet, it has to travel twice that same distance. The heuristic then returns the "expected distance to travel" varying with the number of carried tasks and the number of tasks left to pick up. This heuristic is not \textit{admissible} since it does not underestimate the distance to a goal node. Therefore, it leads A* to not always finding the optimal solution (This heuristic is hereby not \textit{optimal}). It is however important to note that this heuristic finds a solution much faster than the previous admissible heuristic (0.5 second for 6 tasks in Switzerland).
 
 \section{Results}
 
