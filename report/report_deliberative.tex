@@ -61,11 +61,11 @@ When it comes to the implementation of A*, we made the \texttt{abstract class As
 
 \subsection{Heuristic Function}
 % Details of the heuristic functions: main idea, optimality, admissibility %
-We tried two heuristic functions, represented by the classes \texttt{AstarPlanWithZeroHeuristic} and \texttt{AstarPlanWithAnotherHeuristic} (TODO CHECK CORRECT NAME).\\
+We tried two heuristic functions, represented by the classes \texttt{AstarPlanWithZeroHeuristic} and \texttt{AstarPlanWithMinDistanceHeuristic} (TODO CHECK CORRECT NAME).\\
 
 The class \texttt{AstarPlanWithZeroHeuristic} has a heuristic always returning zero, clearly underestimating the distance from the current node to a goal node. In that sense, the heuristic is \textit{admissible}. The admissibility of the heuristics leads A* to always finding the optimal solution. Therefore, this heuristic is \textit{optimal}. It is however important to note that this heuristic is very inefficient, with a large execution time. (TODO: HOW LARGE)\\
 
-The class \texttt{AstarPlanWithAnotherHeuristic} (TODO CHANGE NAME) is the second A* algorithm implemented. Its heuristic considers the minimum amount of distance it had to travel to get to its first task at the beginning. Then, it considers that to deliver each task the vehicle is currently carrying, it has to travel that same distance. It also considers that to pickup and deliver each task it has not picked up yet, it has to travel twice that same distance. The heuristic then returns the "expected distance to travel" varying with the number of carried tasks and the number of tasks left to pick up. This heuristic is not \textit{admissible} since it does not underestimate the distance to a goal node. Therefore, it leads A* to not always finding the optimal solution (This heuristic is hereby not \textit{optimal}). It is however important to note that this heuristic finds a solution much faster than the previous admissible heuristic. (HOW MUCH QUICKER) 
+The class \texttt{AstarPlanWithMinDistanceHeuristic} (TODO CHANGE NAME) is the second A* algorithm implemented. Its heuristic considers the minimum amount of distance it had to travel to get to its first task at the beginning. Then, it considers that to deliver each task the vehicle is currently carrying, it has to travel that same distance. It also considers that to pickup and deliver each task it has not picked up yet, it has to travel twice that same distance. The heuristic then returns the "expected distance to travel" varying with the number of carried tasks and the number of tasks left to pick up. This heuristic is not \textit{admissible} since it does not underestimate the distance to a goal node. Therefore, it leads A* to not always finding the optimal solution (This heuristic is hereby not \textit{optimal}). It is however important to note that this heuristic finds a solution much faster than the previous admissible heuristic. (HOW MUCH QUICKER) 
 
 \section{Results}
 
@@ -73,11 +73,14 @@ The class \texttt{AstarPlanWithAnotherHeuristic} (TODO CHANGE NAME) is the secon
 % Compare the two algorithms in terms of: optimality, efficiency, limitations %
 % Report the number of tasks for which you can build a plan in less than one minute %
 
+
 \subsubsection{Setting}
 % Describe the settings of your experiment: topology, task configuration, etc. %
 
 \subsubsection{Observations}
 % Describe the experimental results and the conclusions you inferred from these results %
+c
+A* can handle more tasks than BFS
 
 
 \subsection{Experiment 2: Multi-agent Experiments}

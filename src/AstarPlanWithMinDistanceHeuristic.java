@@ -1,9 +1,9 @@
 import logist.task.Task;
 
-public class AstarPlanWithUnderestimatingHeuristic extends AstarPlan {
+public class AstarPlanWithMinDistanceHeuristic extends AstarPlan {
 	private double minDistanceToTravelToDeliver;
 
-	public AstarPlanWithUnderestimatingHeuristic(Tree tree) {
+	public AstarPlanWithMinDistanceHeuristic(Tree tree) {
 		super(tree);
 
 		double minDistanceToTravelToDeliver = Double.MAX_VALUE;

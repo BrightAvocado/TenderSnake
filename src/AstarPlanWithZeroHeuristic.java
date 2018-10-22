@@ -6,17 +6,6 @@ public class AstarPlanWithZeroHeuristic extends AstarPlan {
 
 	@Override
 	double h(Node node) {
-		int amountCarriedTasks = node.getState().getCarriedTasks().size();
-		int amountTasksToPickUp = node.getState().getTasksToPickUp().size();
-		double d = getAverageDistanceBetweenPickup(node);
-		
-		return amountCarriedTasks*d/2 + amountTasksToPickUp*d;
+		return 0;
 	}
-	
-	private double getAverageDistanceBetweenPickup(Node node) {
-		int initialAmountTasksToPickUp = this.tree.getRootNode().getState().getTasksToPickUp().size();
-		int amountTasksPickedUp = initialAmountTasksToPickUp - node.getState().getTasksToPickUp().size();
-		return node.getDistanceToRoot()/amountTasksPickedUp;
-	}
-
 }
